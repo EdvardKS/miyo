@@ -120,3 +120,60 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ===== Estilos importados de la PWA (utilidades y animaciones) ===== */
+.hidden {
+  display: none !important;
+}
+
+/* Resalta los contadores de likes cuando están marcados */
+.likes.liked {
+  font-weight: 700;
+}
+
+/* Animación de parpadeo */
+@keyframes flash {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.flash {
+  animation: flash 1s ease-in-out infinite;
+}
+
+/* Spinner genérico */
+.loader {
+  border-width: 4px;
+  border-style: solid;
+  border-color: var(--tw-border-opacity) currentColor;
+  border-top-color: transparent;
+  border-radius: 9999px;
+  animation: spin 1s linear infinite;
+}
+
+/* Animación de aparición vertical corta */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out both;
+}
+
+/* Animación genérica de giro */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
