@@ -76,6 +76,48 @@ router.post('/', auth, [
   }
 });
 
+// Feed de fiestas (mover antes de rutas dinámicas para evitar captura por :code)
+router.get('/feed', auth, async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+
+    const followingIds = req.user.following;
+    console.log('[FEED] user', req.user._id.toString(), 'following', followingIds.length, 'page', page, 'limit', limit);
+
+    const query = {
+      creator: { $in: followingIds },
+      isActive: true,
+      startDate: { $lte: new Date() },
+      endDate: { $gte: new Date() },
+      isExpired: false
+    };
+
+    const parties = await Party.find(query)
+      .populate('creator', 'username avatar')
+      .populate('photos')
+      .sort({ createdAt: -1 })
+      .limit(parseInt(limit))
+      .skip((parseInt(page) - 1) * parseInt(limit));
+
+    const total = await Party.countDocuments(query);
+
+    console.log('[FEED] results', parties.length, 'total', total);
+
+    res.json({
+      parties,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / parseInt(limit))
+      }
+    });
+  } catch (error) {
+    console.error('[FEED] error', error);
+    res.status(500).json({ message: 'Error del servidor' });
+  }
+});
+
 // Obtener fiesta por código
 router.get('/:code', optionalAuth, async (req, res) => {
   try {
@@ -272,49 +314,7 @@ router.get('/my/parties', auth, async (req, res) => {
   }
 });
 
-// Obtener feed de fiestas (de usuarios que sigues)
-router.get('/feed', auth, async (req, res) => {
-  try {
-    const { page = 1, limit = 10 } = req.query;
-    
-    // Obtener fiestas de usuarios que sigues
-    const followingIds = req.user.following;
-    
-    const parties = await Party.find({
-      creator: { $in: followingIds },
-      isActive: true,
-      startDate: { $lte: new Date() },
-      endDate: { $gte: new Date() },
-      isExpired: false
-    })
-    .populate('creator', 'username avatar')
-    .populate('photos')
-    .sort({ createdAt: -1 })
-    .limit(parseInt(limit))
-    .skip((parseInt(page) - 1) * parseInt(limit));
-
-    const total = await Party.countDocuments({
-      creator: { $in: followingIds },
-      isActive: true,
-      startDate: { $lte: new Date() },
-      endDate: { $gte: new Date() },
-      isExpired: false
-    });
-
-    res.json({
-      parties,
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total,
-        pages: Math.ceil(total / parseInt(limit))
-      }
-    });
-  } catch (error) {
-    console.error('Error obteniendo feed:', error);
-    res.status(500).json({ message: 'Error del servidor' });
-  }
-});
+// (ruta de feed movida antes de rutas dinámicas)
 
 // Invitar usuarios por email
 router.post('/:code/invite', auth, [

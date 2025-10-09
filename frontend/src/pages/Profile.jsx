@@ -16,7 +16,8 @@ import {
   Edit,
   Lock,
   Globe,
-  Star
+  Upload,
+  Ban
 } from 'lucide-react';
 
 const Profile = () => {
@@ -78,7 +79,6 @@ const Profile = () => {
       username: user.username,
       bio: user.bio || '',
       isPublicProfile: user.isPublicProfile,
-      isPublicFigure: user.isPublicFigure,
     });
     setIsEditing(true);
   };
@@ -112,6 +112,18 @@ const Profile = () => {
     }
   };
 
+  const blockUser = async () => {
+    const token = localStorage.getItem('token');
+    await fetch(`/api/users/${user.username}/block`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
+    window.location.reload();
+  };
+
+  const unblockUser = async () => {
+    const token = localStorage.getItem('token');
+    await fetch(`/api/users/${user.username}/block`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+    window.location.reload();
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       {/* Profile Header */}
@@ -137,12 +149,6 @@ const Profile = () => {
                 <h1 className="text-2xl font-bold text-gray-900">
                   {user.username}
                 </h1>
-                {user.isPublicFigure && (
-                  <span className="px-2 py-1 text-xs font-medium text-purple-600 bg-purple-100 rounded-full flex items-center">
-                    <Star className="h-3 w-3 mr-1" />
-                    Figura Pública
-                  </span>
-                )}
                 {user.isPublicProfile ? (
                   <span className="px-2 py-1 text-xs font-medium text-green-600 bg-green-100 rounded-full flex items-center">
                     <Globe className="h-3 w-3 mr-1" />
@@ -175,7 +181,7 @@ const Profile = () => {
                     </div>
                     <div className="flex items-center">
                       <Calendar className="h-4 w-4 mr-1" />
-                      <span>Se unió {new Date(user.createdAt).toLocaleDateString()}</span>
+                      <span>Se unió {isNaN(new Date(user.createdAt)) ? '-' : new Date(user.createdAt).toLocaleDateString()}</span>
                     </div>
                   </div>
                 </>
@@ -215,15 +221,32 @@ const Profile = () => {
                       />
                       <span className="text-sm">Perfil público</span>
                     </label>
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={editForm.isPublicFigure}
-                        onChange={(e) => setEditForm({ ...editForm, isPublicFigure: e.target.checked })}
-                        className="mr-2"
-                      />
-                      <span className="text-sm">Figura pública</span>
+                  </div>
+
+                  {/* Subir avatar */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Avatar
                     </label>
+                    <form onSubmit={async (e) => {
+                      e.preventDefault();
+                      const fileInput = e.currentTarget.querySelector('input[type=file]');
+                      if (!fileInput.files[0]) return;
+                      const formData = new FormData();
+                      formData.append('avatar', fileInput.files[0]);
+                      const token = localStorage.getItem('token');
+                      await fetch('/api/users/me/avatar', {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        body: formData
+                      });
+                      window.location.reload();
+                    }} className="flex items-center space-x-3">
+                      <input type="file" accept="image/*" />
+                      <button type="submit" className="inline-flex items-center px-3 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700">
+                        <Upload className="h-4 w-4 mr-1" /> Subir
+                      </button>
+                    </form>
                   </div>
 
                   <div className="flex space-x-2">
@@ -261,6 +284,15 @@ const Profile = () => {
                 className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
               >
                 Seguir
+              </button>
+            )}
+            {!isOwnProfile && (
+              <button
+                onClick={blockUser}
+                className="px-3 py-2 ml-2 text-red-600 border border-red-300 rounded-md hover:bg-red-50"
+                title="Bloquear usuario"
+              >
+                <Ban className="h-4 w-4" />
               </button>
             )}
           </div>

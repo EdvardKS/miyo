@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { partyService } from '../services/partyService';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Users, Heart, MessageCircle, Camera } from 'lucide-react';
 
 const Feed = () => {
   const [page, setPage] = useState(1);
+  const navigate = useNavigate();
   
   const { data: feedData, isLoading, error } = useQuery(
     ['feed', page],
@@ -21,6 +22,11 @@ const Feed = () => {
     );
   }
 
+  // Redirección a Top si no sigues a nadie (feed vacío)
+  if (feedData && Array.isArray(feedData.parties) && feedData.parties.length === 0) {
+    navigate('/top');
+  }
+
   if (error) {
     return (
       <div className="text-center py-8">
@@ -30,10 +36,10 @@ const Feed = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto text-gray-900">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Feed de Fiestas</h1>
-        <p className="text-gray-600">Descubre las fiestas de las personas que sigues</p>
+        <h1 className="text-3xl font-bold text-gold mb-2">Feed de Álbumes</h1>
+        <p className="text-gray-600">Descubre los álbumes de las personas que sigues</p>
       </div>
 
       {feedData?.parties?.length === 0 ? (

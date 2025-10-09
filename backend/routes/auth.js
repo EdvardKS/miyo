@@ -127,7 +127,7 @@ router.put('/profile', auth, [
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { username, bio, isPublicProfile, isPublicFigure } = req.body;
+  const { username, bio, isPublicProfile } = req.body;
     const user = req.user;
 
     if (username && username !== user.username) {
@@ -140,7 +140,6 @@ router.put('/profile', auth, [
 
     if (bio !== undefined) user.bio = bio;
     if (isPublicProfile !== undefined) user.isPublicProfile = isPublicProfile;
-    if (isPublicFigure !== undefined) user.isPublicFigure = isPublicFigure;
 
     await user.save();
 

@@ -16,6 +16,36 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Temas: dorado + claros/oscuros */
+:root {
+  --gold: #d4af37;
+  --gold-600: #b38b1d;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #0b0b0b;
+    color: #e5e7eb;
+  }
+  .bg-surface {
+    background-color: #0f0f0f;
+  }
+  .text-gold { color: var(--gold); }
+  .border-gold { border-color: var(--gold); }
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    background-color: #ffffff;
+    color: #111827;
+  }
+  .bg-surface {
+    background-color: #ffffff;
+  }
+  .text-gold { color: var(--gold-600); }
+  .border-gold { border-color: var(--gold-600); }
+}
+
 * {
   box-sizing: border-box;
 }

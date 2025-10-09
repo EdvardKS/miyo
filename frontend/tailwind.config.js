@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'media',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -8,16 +9,16 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          50: '#fff7ed',
-          100: '#ffedd5',
-          200: '#fed7aa',
-          300: '#fdba74',
-          400: '#fb923c',
-          500: '#f97316',
-          600: '#ea580c',
-          700: '#c2410c',
-          800: '#9a3412',
-          900: '#7c2d12',
+          50: '#f8f5e6',
+          100: '#f1e7bf',
+          200: '#e9d78f',
+          300: '#e1c85f',
+          400: '#daba3a',
+          500: '#d4af37', // gold
+          600: '#b38f25',
+          700: '#8f6f1b',
+          800: '#6b5113',
+          900: '#4a370c',
         },
       },
       animation: {

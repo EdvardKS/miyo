@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Camera, Users, TrendingUp, PlusCircle, User, LogOut, Home } from 'lucide-react';
+import { Camera, Search, TrendingUp, PlusCircle, User, LogOut, Home } from 'lucide-react';
 
 const Layout = ({ children }) => {
   const { user, logout } = useAuth();
@@ -18,14 +18,14 @@ const Layout = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-surface text-gray-900">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-surface shadow-sm border-b border-gold/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link to="/" className="flex items-center space-x-2">
-              <Camera className="h-8 w-8 text-primary-500" />
-              <span className="text-xl font-bold text-gray-900">Fiestas</span>
+              <Camera className="h-8 w-8 text-gold" />
+              <span className="text-xl font-bold text-gold">Álbumes</span>
             </Link>
 
             <nav className="hidden md:flex space-x-8">
@@ -33,8 +33,8 @@ const Layout = ({ children }) => {
                 to="/"
                 className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium ${
                   isActive('/') 
-                    ? 'text-primary-600 bg-primary-50' 
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'text-gold bg-black/5' 
+                    : 'text-gray-700 hover:text-gold'
                 }`}
               >
                 <Home className="h-4 w-4" />
@@ -44,8 +44,8 @@ const Layout = ({ children }) => {
                 to="/top"
                 className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium ${
                   isActive('/top') 
-                    ? 'text-primary-600 bg-primary-50' 
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'text-gold bg-black/5' 
+                    : 'text-gray-700 hover:text-gold'
                 }`}
               >
                 <TrendingUp className="h-4 w-4" />
@@ -55,31 +55,40 @@ const Layout = ({ children }) => {
                 to="/create"
                 className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium ${
                   isActive('/create') 
-                    ? 'text-primary-600 bg-primary-50' 
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'text-gold bg-black/5' 
+                    : 'text-gray-700 hover:text-gold'
                 }`}
               >
                 <PlusCircle className="h-4 w-4" />
-                <span>Crear</span>
+                <span>Crear álbum</span>
               </Link>
               <Link
                 to={`/profile/${user?.username}`}
                 className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium ${
                   isActive(`/profile/${user?.username}`) 
-                    ? 'text-primary-600 bg-primary-50' 
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'text-gold bg-black/5' 
+                    : 'text-gray-700 hover:text-gold'
                 }`}
               >
                 <User className="h-4 w-4" />
                 <span>Perfil</span>
               </Link>
+              <form action="/search" className="flex items-center">
+                <input name="q" type="search" placeholder="Buscar usuarios" className="px-3 py-1 text-sm border rounded-l-md border-gray-300 focus:outline-none" />
+                <button className="px-2 py-1 bg-primary-600 text-white rounded-r-md"><Search className="h-4 w-4" /></button>
+              </form>
+              {/* Unirse a álbum por código */}
+              <form onSubmit={(e)=>{e.preventDefault(); const code=e.currentTarget.code.value.trim().toUpperCase(); if(code){ navigate(`/gallery/${code}`); }}} className="flex items-center">
+                <input name="code" type="text" placeholder="Código álbum" className="px-3 py-1 text-sm border rounded-l-md border-gray-300 focus:outline-none uppercase" />
+                <button className="px-2 py-1 bg-gold text-black rounded-r-md">Ir</button>
+              </form>
             </nav>
 
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">Hola, {user?.username}</span>
+              <span className="text-sm">Hola, {user?.username}</span>
               <button
                 onClick={handleLogout}
-                className="flex items-center space-x-1 text-gray-600 hover:text-gray-900"
+                className="flex items-center space-x-1 hover:text-gold"
               >
                 <LogOut className="h-4 w-4" />
                 <span className="hidden sm:inline">Salir</span>

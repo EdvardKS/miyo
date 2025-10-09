@@ -1,7 +1,29 @@
 const express = require('express');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 const User = require('../models/User');
 const { auth, optionalAuth } = require('../middleware/auth');
 const router = express.Router();
+
+// Configuración de subida para avatar
+const avatarStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = process.env.UPLOAD_PATH || './uploads';
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = 'avatar-' + req.user._id + '-' + Date.now();
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
+});
+const avatarUpload = multer({
+  storage: avatarStorage,
+  limits: { fileSize: parseInt(process.env.MAX_FILE_SIZE) || 10 * 1024 * 1024 }
+});
 
 // Buscar usuarios
 router.get('/search', auth, async (req, res) => {
@@ -268,3 +290,75 @@ router.get('/top/activity', async (req, res) => {
 });
 
 module.exports = router;
+
+// Subir/actualizar avatar
+router.post('/me/avatar', auth, avatarUpload.single('avatar'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No se subió avatar' });
+    }
+
+    // Eliminar avatar anterior si era local
+    if (req.user.avatar && req.user.avatar.startsWith('/uploads/')) {
+      const filePath = path.join(process.cwd(), req.user.avatar);
+      if (fs.existsSync(filePath)) {
+        try { fs.unlinkSync(filePath); } catch {}
+      }
+    }
+
+    req.user.avatar = `/uploads/${req.file.filename}`;
+    await req.user.save();
+
+    res.json({ message: 'Avatar actualizado', avatar: req.user.avatar });
+  } catch (error) {
+    console.error('Error subiendo avatar:', error);
+    res.status(500).json({ message: 'Error del servidor' });
+  }
+});
+
+// Bloquear usuario
+router.post('/:username/block', auth, async (req, res) => {
+  try {
+    const { username } = req.params;
+    const target = await User.findOne({ username, isActive: true });
+    if (!target) return res.status(404).json({ message: 'Usuario no encontrado' });
+    if (target._id.equals(req.user._id)) return res.status(400).json({ message: 'No puedes bloquearte a ti mismo' });
+
+    // Evitar duplicados
+    if (!req.user.blockedUsers.includes(target._id)) {
+      req.user.blockedUsers.push(target._id);
+    }
+    if (!target.blockedBy.includes(req.user._id)) {
+      target.blockedBy.push(req.user._id);
+    }
+
+    // Romper relaciones de follow
+    req.user.following = req.user.following.filter(id => id.toString() !== target._id.toString());
+    req.user.followers = req.user.followers.filter(id => id.toString() !== target._id.toString());
+    target.following = target.following.filter(id => id.toString() !== req.user._id.toString());
+    target.followers = target.followers.filter(id => id.toString() !== req.user._id.toString());
+
+    await Promise.all([req.user.save(), target.save()]);
+    res.json({ message: 'Usuario bloqueado' });
+  } catch (error) {
+    console.error('Error bloqueando usuario:', error);
+    res.status(500).json({ message: 'Error del servidor' });
+  }
+});
+
+// Desbloquear usuario
+router.delete('/:username/block', auth, async (req, res) => {
+  try {
+    const { username } = req.params;
+    const target = await User.findOne({ username, isActive: true });
+    if (!target) return res.status(404).json({ message: 'Usuario no encontrado' });
+
+    req.user.blockedUsers = req.user.blockedUsers.filter(id => id.toString() !== target._id.toString());
+    target.blockedBy = target.blockedBy.filter(id => id.toString() !== req.user._id.toString());
+    await Promise.all([req.user.save(), target.save()]);
+    res.json({ message: 'Usuario desbloqueado' });
+  } catch (error) {
+    console.error('Error desbloqueando usuario:', error);
+    res.status(500).json({ message: 'Error del servidor' });
+  }
+});

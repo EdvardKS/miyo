@@ -35,15 +35,21 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  isPublicFigure: {
-    type: Boolean,
-    default: false
-  },
   followers: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
   following: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  // Usuarios que este usuario ha bloqueado
+  blockedUsers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  // Usuarios que han bloqueado a este usuario
+  blockedBy: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
@@ -99,7 +105,6 @@ userSchema.methods.toPublicJSON = function() {
     avatar: this.avatar,
     bio: this.bio,
     isPublicProfile: this.isPublicProfile,
-    isPublicFigure: this.isPublicFigure,
     followersCount: this.followers.length,
     followingCount: this.following.length,
     createdAt: this.createdAt
