@@ -18,23 +18,23 @@ const Layout = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-surface text-gray-900">
+    <div className="min-h-screen bg-white dark:bg-[#0f0f0f] text-gray-900 dark:text-gray-100">
       {/* Header */}
-      <header className="bg-surface shadow-sm border-b border-gold/40">
+      <header className="bg-white/80 dark:bg-[#0f0f0f]/80 backdrop-blur shadow-sm border-b border-gray-200 dark:border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link to="/" className="flex items-center space-x-2">
-              <Camera className="h-8 w-8 text-gold" />
-              <span className="text-xl font-bold text-gold">Álbumes</span>
+              <Camera className="h-8 w-8 text-primary-500" />
+              <span className="text-xl font-bold">Álbumes</span>
             </Link>
 
             <nav className="hidden md:flex space-x-8">
               <Link
                 to="/"
-                className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium ${
+                className={`flex items-center space-x-1 px-3 h-9 rounded-md text-sm font-medium transition-colors ${
                   isActive('/') 
-                    ? 'text-gold bg-black/5' 
-                    : 'text-gray-700 hover:text-gold'
+                    ? 'text-primary-700 dark:text-primary-400 bg-primary-50/70 dark:bg-white/10' 
+                    : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400'
                 }`}
               >
                 <Home className="h-4 w-4" />
@@ -42,10 +42,10 @@ const Layout = ({ children }) => {
               </Link>
               <Link
                 to="/top"
-                className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium ${
+                className={`flex items-center space-x-1 px-3 h-9 rounded-md text-sm font-medium transition-colors ${
                   isActive('/top') 
-                    ? 'text-gold bg-black/5' 
-                    : 'text-gray-700 hover:text-gold'
+                    ? 'text-primary-700 dark:text-primary-400 bg-primary-50/70 dark:bg-white/10' 
+                    : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400'
                 }`}
               >
                 <TrendingUp className="h-4 w-4" />
@@ -53,10 +53,10 @@ const Layout = ({ children }) => {
               </Link>
               <Link
                 to="/create"
-                className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium ${
+                className={`flex items-center space-x-1 px-3 h-9 rounded-md text-sm font-medium transition-colors ${
                   isActive('/create') 
-                    ? 'text-gold bg-black/5' 
-                    : 'text-gray-700 hover:text-gold'
+                    ? 'text-primary-700 dark:text-primary-400 bg-primary-50/70 dark:bg-white/10' 
+                    : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400'
                 }`}
               >
                 <PlusCircle className="h-4 w-4" />
@@ -64,23 +64,23 @@ const Layout = ({ children }) => {
               </Link>
               <Link
                 to={`/profile/${user?.username}`}
-                className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium ${
+                className={`flex items-center space-x-1 px-3 h-9 rounded-md text-sm font-medium transition-colors ${
                   isActive(`/profile/${user?.username}`) 
-                    ? 'text-gold bg-black/5' 
-                    : 'text-gray-700 hover:text-gold'
+                    ? 'text-primary-700 dark:text-primary-400 bg-primary-50/70 dark:bg-white/10' 
+                    : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400'
                 }`}
               >
                 <User className="h-4 w-4" />
                 <span>Perfil</span>
               </Link>
               <form action="/search" className="flex items-center">
-                <input name="q" type="search" placeholder="Buscar usuarios" className="px-3 py-1 text-sm border rounded-l-md border-gray-300 focus:outline-none" />
-                <button className="px-2 py-1 bg-primary-600 text-white rounded-r-md"><Search className="h-4 w-4" /></button>
+                <input name="q" type="search" placeholder="Buscar usuarios" className="px-3 h-9 text-sm border rounded-l-md border-gray-300 dark:border-white/10 bg-white dark:bg-[#0f0f0f] focus:outline-none focus:ring-2 focus:ring-primary-500/50" />
+                <button className="px-3 h-9 bg-primary-600 text-white rounded-r-md hover:bg-primary-700"><Search className="h-4 w-4" /></button>
               </form>
               {/* Unirse a álbum por código */}
               <form onSubmit={(e)=>{e.preventDefault(); const code=e.currentTarget.code.value.trim().toUpperCase(); if(code){ navigate(`/gallery/${code}`); }}} className="flex items-center">
-                <input name="code" type="text" placeholder="Código álbum" className="px-3 py-1 text-sm border rounded-l-md border-gray-300 focus:outline-none uppercase" />
-                <button className="px-2 py-1 bg-gold text-black rounded-r-md">Ir</button>
+                <input name="code" type="text" placeholder="Código álbum" className="px-3 h-9 text-sm border rounded-l-md border-gray-300 dark:border-white/10 bg-white dark:bg-[#0f0f0f] focus:outline-none focus:ring-2 focus:ring-primary-500/50 uppercase" />
+                <button className="px-3 h-9 bg-primary-500 text-black rounded-r-md hover:bg-primary-600">Ir</button>
               </form>
             </nav>
 
@@ -88,7 +88,7 @@ const Layout = ({ children }) => {
               <span className="text-sm">Hola, {user?.username}</span>
               <button
                 onClick={handleLogout}
-                className="flex items-center space-x-1 hover:text-gold"
+                className="flex items-center space-x-1 hover:text-primary-600 dark:hover:text-primary-400"
               >
                 <LogOut className="h-4 w-4" />
                 <span className="hidden sm:inline">Salir</span>

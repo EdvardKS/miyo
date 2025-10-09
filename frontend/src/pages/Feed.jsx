@@ -16,16 +16,21 @@ const Feed = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="spinner"></div>
+      <div className="max-w-4xl mx-auto p-4">
+        <div className="space-y-6">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="rounded-lg border border-gray-200 dark:border-white/10 p-6 animate-pulse">
+              <div className="h-6 w-1/3 bg-gray-200 dark:bg-white/10 rounded mb-4" />
+              <div className="h-4 w-1/2 bg-gray-200 dark:bg-white/10 rounded mb-2" />
+              <div className="h-4 w-1/4 bg-gray-200 dark:bg-white/10 rounded" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
 
-  // Redirección a Top si no sigues a nadie (feed vacío)
-  if (feedData && Array.isArray(feedData.parties) && feedData.parties.length === 0) {
-    navigate('/top');
-  }
+  // Mostrar estado vacío; NO redirigir automáticamente
 
   if (error) {
     return (
@@ -36,7 +41,7 @@ const Feed = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto text-gray-900">
+    <div className="max-w-4xl mx-auto text-gray-900 dark:text-gray-100">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gold mb-2">Feed de Álbumes</h1>
         <p className="text-gray-600">Descubre los álbumes de las personas que sigues</p>
@@ -44,14 +49,14 @@ const Feed = () => {
 
       {feedData?.parties?.length === 0 ? (
         <div className="text-center py-12">
-          <Camera className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No hay fiestas aún</h3>
-          <p className="text-gray-600 mb-4">
-            Comienza a seguir a otros usuarios para ver sus fiestas aquí
+          <Camera className="h-16 w-16 text-primary-500 mx-auto mb-4" />
+          <h3 className="text-lg font-medium mb-2">Tu feed está vacío</h3>
+          <p className="text-gray-600 dark:text-gray-300 mb-4">
+            Sigue a otros usuarios para ver sus álbumes aquí
           </p>
           <Link
             to="/top"
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700"
+            className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-black bg-primary-500 hover:bg-primary-600"
           >
             Descubrir usuarios
           </Link>
