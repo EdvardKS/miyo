@@ -14,6 +14,7 @@ import PartyGallery from './pages/PartyGallery';
 import Profile from './pages/Profile';
 import MyPhotos from './pages/MyPhotos';
 import Privacy from './pages/Privacy';
+import Search from './pages/Search';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const queryClient = new QueryClient();
@@ -69,6 +70,13 @@ function App() {
                   </ProtectedRoute>
                 } />
                 <Route path="/privacy" element={<Privacy />} />
+                <Route path="/search" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Search />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
               </Routes>
               <Toaster />
             </div>

@@ -103,53 +103,23 @@ const Layout = ({ children }) => {
         {children}
       </main>
 
-      {/* Mobile Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
-        <div className="grid grid-cols-5 gap-1">
-          <Link
-            to="/"
-            className={`flex flex-col items-center py-2 px-1 ${
-              isActive('/') ? 'text-primary-600' : 'text-gray-600'
-            }`}
-          >
+      {/* Mobile Navigation - solo iconos */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-[#0f0f0f]/90 backdrop-blur border-t border-gray-200 dark:border-white/10">
+        <div className="grid grid-cols-5">
+          <Link to="/" className={`flex items-center justify-center py-2 ${isActive('/') ? 'text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-300'}`}>
             <Home className="h-6 w-6" />
-            <span className="text-xs mt-1">Feed</span>
           </Link>
-          <Link
-            to="/top"
-            className={`flex flex-col items-center py-2 px-1 ${
-              isActive('/top') ? 'text-primary-600' : 'text-gray-600'
-            }`}
-          >
+          <Link to="/top" className={`flex items-center justify-center py-2 ${isActive('/top') ? 'text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-300'}`}>
             <TrendingUp className="h-6 w-6" />
-            <span className="text-xs mt-1">Top</span>
           </Link>
-          <Link
-            to="/create"
-            className={`flex flex-col items-center py-2 px-1 ${
-              isActive('/create') ? 'text-primary-600' : 'text-gray-600'
-            }`}
-          >
+          <Link to="/create" className={`flex items-center justify-center py-2 ${isActive('/create') ? 'text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-300'}`}>
             <PlusCircle className="h-6 w-6" />
-            <span className="text-xs mt-1">Crear</span>
           </Link>
-          <Link
-            to="/my-photos"
-            className={`flex flex-col items-center py-2 px-1 ${
-              isActive('/my-photos') ? 'text-primary-600' : 'text-gray-600'
-            }`}
-          >
-            <Camera className="h-6 w-6" />
-            <span className="text-xs mt-1">Mis Fotos</span>
+          <Link to="/search" className={`flex items-center justify-center py-2 ${isActive('/search') ? 'text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-300'}`}>
+            <Search className="h-6 w-6" />
           </Link>
-          <Link
-            to={`/profile/${user?.username}`}
-            className={`flex flex-col items-center py-2 px-1 ${
-              isActive(`/profile/${user?.username}`) ? 'text-primary-600' : 'text-gray-600'
-            }`}
-          >
+          <Link to={`/profile/${user?.username}`} className={`flex items-center justify-center py-2 ${isActive(`/profile/${user?.username}`) ? 'text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-300'}`}>
             <User className="h-6 w-6" />
-            <span className="text-xs mt-1">Perfil</span>
           </Link>
         </div>
       </nav>
