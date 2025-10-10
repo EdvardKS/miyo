@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { Eye, EyeOff, Camera, Lock } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { Eye, EyeOff, Camera } from 'lucide-react';
+
+const inputClass =
+  'w-full rounded-2xl border border-outline/40 bg-surface-muted px-4 py-3 text-sm text-content placeholder:text-content-muted focus:border-brand focus:outline-none focus:ring-0 focus:shadow-focus transition';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,103 +25,117 @@ const Login = () => {
       await login(data.email, data.password);
       navigate('/');
     } catch (error) {
-      // Error ya manejado en el contexto
+      // handled by context
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <div className="flex justify-center">
-            <Camera className="h-12 w-12 text-primary-500" />
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-16">
+      <BackgroundAccent />
+
+      <div className="relative z-10 flex w-full max-w-md flex-col gap-8">
+        <header className="ui-card border border-outline/30 px-8 py-10 text-center">
+          <div className="mx-auto flex size-14 items-center justify-center rounded-2xl border border-outline/40 bg-surface-muted shadow-soft">
+            <Camera className="h-7 w-7 text-brand-500" />
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Iniciar Sesión
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            ¿No tienes cuenta?{' '}
-            <Link
-              to="/register"
-              className="font-medium text-primary-600 hover:text-primary-500"
-            >
-              Regístrate
-            </Link>
+          <h1 className="mt-6 text-3xl font-semibold tracking-tight text-content">Bienvenido</h1>
+          <p className="mt-3 text-sm text-content-muted">
+            Accede a tus álbumes inteligentes y revive cada momento compartido.
           </p>
-        </div>
-        
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email
-              </label>
-              <input
-                {...register('email', {
-                  required: 'El email es requerido',
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: 'Email inválido',
-                  },
-                })}
-                type="email"
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                placeholder="tu@email.com"
-              />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-              )}
-            </div>
+        </header>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Contraseña
-              </label>
-              <div className="mt-1 relative">
+        <section className="ui-card border border-outline/30 px-8 py-10">
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+            <div className="space-y-4">
+              <Field label="Email">
                 <input
-                  {...register('password', {
-                    required: 'La contraseña es requerida',
+                  {...register('email', {
+                    required: 'El email es requerido',
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: 'Email inválido',
+                    },
                   })}
-                  type={showPassword ? 'text' : 'password'}
-                  className="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                  placeholder="••••••••"
+                  type="email"
+                  className={inputClass}
+                  placeholder="hola@eventscatch.io"
                 />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-gray-400" />
-                  )}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
-              )}
-            </div>
-          </div>
+                {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
+              </Field>
 
-          <div>
+              <Field label="Contraseña">
+                <div className="relative">
+                  <input
+                    {...register('password', {
+                      required: 'La contraseña es requerida',
+                    })}
+                    type={showPassword ? 'text' : 'password'}
+                    className={`${inputClass} pr-12`}
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 flex items-center px-3 text-content-muted"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+                {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
+              </Field>
+            </div>
+
+            <div className="flex items-center justify-between text-xs text-content-muted">
+              <div className="inline-flex items-center gap-2 rounded-full border border-outline/40 bg-surface-muted px-3 py-1.5">
+                <Lock className="h-3.5 w-3.5 text-brand-500" />
+                Sesión segura
+              </div>
+              <span className="text-content-secondary">
+                ¿Olvidaste tu contraseña? Contacta con soporte.
+              </span>
+            </div>
+
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-[color:var(--color-on-accent)] shadow-soft transition hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {loading ? (
-                <div className="spinner mr-2"></div>
-              ) : null}
-              {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+              {loading ? <span className="spinner" /> : null}
+              {loading ? 'Iniciando sesión...' : 'Entrar'}
             </button>
-          </div>
-        </form>
+          </form>
+
+          <p className="mt-6 text-center text-sm text-content-muted">
+            ¿No tienes cuenta?{' '}
+            <Link to="/register" className="font-semibold text-brand hover:underline">
+              Crear una nueva
+            </Link>
+          </p>
+        </section>
       </div>
     </div>
   );
 };
+
+const Field = ({ label, children }) => (
+  <label className="flex flex-col gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-content-muted">
+    {label}
+    {children}
+  </label>
+);
+
+const ErrorMessage = ({ children }) => (
+  <p className="text-xs font-medium text-danger">{children}</p>
+);
+
+const BackgroundAccent = () => (
+  <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+    <div className="absolute left-1/2 top-10 h-64 w-64 -translate-x-1/2 rounded-full bg-brand/30 blur-3xl" />
+    <div className="absolute bottom-10 right-10 h-52 w-52 rounded-full bg-brand/20 blur-3xl" />
+    <div className="absolute left-10 bottom-32 h-48 w-48 rounded-full bg-brand/10 blur-3xl" />
+  </div>
+);
 
 export default Login;

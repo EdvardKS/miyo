@@ -161,11 +161,12 @@ const PartyGallery = () => {
 
   if (!party) {
     return (
-      <div className="text-center py-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Fiesta no encontrada</h2>
+      <div className="flex flex-col items-center gap-4 rounded-3xl border border-outline/40 bg-surface px-6 py-12 text-center">
+        <h2 className="text-2xl font-semibold text-content">Fiesta no encontrada</h2>
+        <p className="text-sm text-content-muted">Revisa el código o vuelve al feed principal.</p>
         <button
           onClick={() => navigate('/')}
-          className="text-primary-600 hover:text-primary-700"
+          className="inline-flex items-center rounded-full border border-outline/50 px-4 py-2 text-sm font-semibold text-brand transition hover:border-brand hover:text-brand"
         >
           Volver al inicio
         </button>
@@ -254,22 +255,24 @@ const PartyGallery = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-base text-content">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
+      <div className="border-b border-outline/30 bg-surface/90 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => navigate('/')}
-                className="text-gray-600 hover:text-gray-900"
+                className="text-content-muted hover:text-content"
               >
                 <X className="h-6 w-6" />
               </button>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">{party.title}</h1>
-                <div className="flex items-center space-x-4 text-sm text-gray-600">
-                  <span className="font-mono bg-gray-100 px-2 py-1 rounded">{code}</span>
+                <h1 className="text-xl font-semibold text-content">{party.title}</h1>
+                <div className="flex items-center space-x-4 text-sm text-content-muted">
+                  <span className="font-mono rounded-full border border-outline/40 bg-surface-muted px-2 py-1">
+                    {code}
+                  </span>
                   <span className="flex items-center">
                     <Users className="h-4 w-4 mr-1" />
                     {party.participants.length}
@@ -281,14 +284,14 @@ const PartyGallery = () => {
             <div className="flex items-center space-x-2">
               <button
                 onClick={copyPartyCode}
-                className="p-2 text-gray-600 hover:text-gray-900"
+                className="rounded-full p-2 text-content-muted transition hover:text-content"
                 title="Copiar código"
               >
                 <Copy className="h-5 w-5" />
               </button>
               <button
                 onClick={copyPartyLink}
-                className="p-2 text-gray-600 hover:text-gray-900"
+                className="rounded-full p-2 text-content-muted transition hover:text-content"
                 title="Compartir enlace"
               >
                 <Share2 className="h-5 w-5" />
@@ -296,7 +299,7 @@ const PartyGallery = () => {
               {partyData.isParticipant && (
                 <button
                   onClick={handleLeaveParty}
-                  className="p-2 text-red-600 hover:text-red-700"
+                  className="rounded-full p-2 text-danger transition hover:text-danger"
                   title="Salir de la fiesta"
                 >
                   <LogOut className="h-5 w-5" />
@@ -306,16 +309,16 @@ const PartyGallery = () => {
           </div>
 
           {/* Party Info */}
-          <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-            <div className="flex items-center text-gray-600">
+          <div className="mt-4 grid grid-cols-1 gap-4 text-sm md:grid-cols-3">
+            <div className="flex items-center text-content-muted">
               <MapPin className="h-4 w-4 mr-2" />
               {party.location.name}
             </div>
-            <div className="flex items-center text-gray-600">
+            <div className="flex items-center text-content-muted">
               <Calendar className="h-4 w-4 mr-2" />
               {new Date(party.startDate).toLocaleDateString()}
             </div>
-            <div className="flex items-center text-gray-600">
+            <div className="flex items-center text-content-muted">
               <Users className="h-4 w-4 mr-2" />
               {party.participants.length} participantes
             </div>
@@ -324,17 +327,17 @@ const PartyGallery = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         {!partyData.hasAccess ? (
-          <div className="text-center py-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Fiesta Privada</h2>
-            <p className="text-gray-600 mb-6">
+          <div className="ui-card border border-outline/40 px-6 py-12 text-center">
+            <h2 className="text-2xl font-semibold text-content mb-3">Fiesta privada</h2>
+            <p className="text-sm text-content-muted mb-6">
               Esta fiesta es privada. Necesitas un código de invitación para acceder.
             </p>
             <button
               onClick={() => joinPartyMutation.mutate()}
               disabled={joinPartyMutation.isLoading}
-              className="px-6 py-3 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-[color:var(--color-on-accent)] shadow-soft transition hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-70"
             >
               {joinPartyMutation.isLoading ? 'Uniéndose...' : 'Unirse a la Fiesta'}
             </button>
@@ -343,20 +346,18 @@ const PartyGallery = () => {
           <>
             {/* Photos Grid */}
             {photos.length === 0 ? (
-              <div className="text-center py-12">
-                <Camera className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  No hay fotos aún
-                </h3>
-                <p className="text-gray-600 mb-4">
+              <div className="ui-card border border-outline/40 px-6 py-12 text-center">
+                <Camera className="mx-auto mb-4 h-16 w-16 text-brand" />
+                <h3 className="text-lg font-semibold text-content mb-2">No hay fotos aún</h3>
+                <p className="text-sm text-content-muted mb-4">
                   Sé el primero en capturar un momento especial
                 </p>
                 {canUploadPhotos && (
                   <button
                     onClick={handleUploadPhoto}
-                    className="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
+                    className="inline-flex items-center gap-2 rounded-full border border-outline/50 px-4 py-2 text-sm font-semibold text-brand transition hover:border-brand hover:text-brand"
                   >
-                    <Camera className="h-5 w-5 mr-2" />
+                    <Camera className="h-5 w-5" />
                     Subir Primera Foto
                   </button>
                 )}
@@ -380,7 +381,7 @@ const PartyGallery = () => {
             {canUploadPhotos && (
               <button
                 onClick={handleUploadPhoto}
-                className="fixed bottom-6 right-6 w-14 h-14 bg-primary-600 text-white rounded-full shadow-lg hover:bg-primary-700 flex items-center justify-center"
+                className="fixed bottom-6 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-brand text-[color:var(--color-on-accent)] shadow-soft transition hover:shadow-lg"
               >
                 <Camera className="h-6 w-6" />
               </button>
@@ -416,12 +417,12 @@ const PhotoCard = ({ photo, onClick, onLike, onHide, isCreator }) => {
   const isVideo = photo.mimeType.startsWith('video/');
   
   return (
-    <div className="relative group cursor-pointer" onClick={onClick}>
-      <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+    <div className="group relative cursor-pointer overflow-hidden rounded-3xl border border-outline/40 bg-surface shadow-soft transition hover:-translate-y-1" onClick={onClick}>
+      <div className="aspect-square overflow-hidden bg-surface-muted">
         {isVideo ? (
           <video
             src={photo.url}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
             muted
             onMouseEnter={(e) => e.target.play()}
             onMouseLeave={(e) => e.target.pause()}
@@ -430,43 +431,41 @@ const PhotoCard = ({ photo, onClick, onLike, onHide, isCreator }) => {
           <img
             src={photo.thumbnailUrl || photo.url}
             alt={photo.caption}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
           />
         )}
       </div>
-      
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all rounded-lg">
-        <div className="absolute bottom-0 left-0 right-0 p-2 text-white transform translate-y-full group-hover:translate-y-0 transition-transform">
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center space-x-3">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onLike();
-                }}
-                className={`flex items-center space-x-1 ${photo.hasUserLiked ? 'text-red-500' : ''}`}
-              >
-                <Heart className={`h-4 w-4 ${photo.hasUserLiked ? 'fill-current' : ''}`} />
-                <span>{photo.likesCount}</span>
-              </button>
-              <div className="flex items-center space-x-1">
-                <MessageCircle className="h-4 w-4" />
-                <span>{photo.commentsCount}</span>
-              </div>
+
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <div className="absolute inset-x-0 bottom-0 translate-y-6 p-3 text-white transition duration-300 group-hover:translate-y-0">
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onLike();
+              }}
+              className={`flex items-center gap-1 rounded-full px-3 py-1 transition ${photo.hasUserLiked ? 'bg-white/20 text-danger' : 'bg-white/10 text-white/90 hover:bg-white/20'}`}
+            >
+              <Heart className={`h-4 w-4 ${photo.hasUserLiked ? 'fill-current' : ''}`} />
+              <span>{photo.likesCount}</span>
+            </button>
+            <div className="flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-white/90">
+              <MessageCircle className="h-4 w-4" />
+              <span>{photo.commentsCount}</span>
             </div>
-            {isCreator && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onHide();
-                }}
-                className="p-1"
-              >
-                <EyeOff className="h-4 w-4" />
-              </button>
-            )}
           </div>
+          {isCreator && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onHide();
+              }}
+              className="rounded-full bg-white/10 p-2 text-white/80 transition hover:bg-white/20"
+            >
+              <EyeOff className="h-4 w-4" />
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -488,108 +487,97 @@ const PhotoModal = ({
   const isVideo = photo.mimeType.startsWith('video/');
   
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
-      <div className="max-w-4xl w-full max-h-full flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between text-white mb-4">
-          <div className="flex items-center space-x-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4">
+      <div className="flex max-h-full w-full max-w-4xl flex-col">
+        <div className="mb-4 flex items-center justify-between text-white">
+          <div className="flex items-center gap-4">
             <img
               src={photo.user.avatar || '/default-avatar.png'}
               alt={photo.user.username}
-              className="w-8 h-8 rounded-full"
+              className="h-8 w-8 rounded-full object-cover"
             />
-            <span className="font-medium">{photo.user.username}</span>
+            <span className="text-sm font-semibold">{photo.user.username}</span>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             <button
               onClick={onLike}
-              className={`p-2 ${photo.hasUserLiked ? 'text-red-500' : 'text-white'}`}
+              className={`rounded-full p-2 ${photo.hasUserLiked ? 'bg-white/20 text-danger' : 'bg-white/10 text-white/90 hover:bg-white/20'}`}
             >
               <Heart className={`h-5 w-5 ${photo.hasUserLiked ? 'fill-current' : ''}`} />
             </button>
             {isCreator && (
-              <button onClick={onHide} className="p-2 text-white">
+              <button onClick={onHide} className="rounded-full bg-white/10 p-2 text-white/80 hover:bg-white/20">
                 <EyeOff className="h-5 w-5" />
               </button>
             )}
-            <button onClick={onClose} className="p-2 text-white">
+            <button onClick={onClose} className="rounded-full bg-white/10 p-2 text-white/80 hover:bg-white/20">
               <X className="h-5 w-5" />
             </button>
           </div>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 flex flex-col md:flex-row gap-4">
-          {/* Media */}
-          <div className="flex-1 flex items-center justify-center">
+        <div className="flex flex-1 flex-col gap-4 overflow-hidden rounded-3xl border border-white/10 bg-black/40 p-4 backdrop-blur">
+          <div className="flex flex-1 items-center justify-center rounded-2xl bg-black/40">
             {isVideo ? (
-              <video
-                src={photo.url}
-                controls
-                className="max-w-full max-h-full rounded-lg"
-              />
+              <video src={photo.url} controls className="max-h-full w-full rounded-2xl object-contain" />
             ) : (
               <img
                 src={photo.url}
                 alt={photo.caption}
-                className="max-w-full max-h-full rounded-lg object-contain"
+                className="max-h-full w-full rounded-2xl object-contain"
               />
             )}
           </div>
 
-          {/* Comments Sidebar */}
-          <div className="w-full md:w-80 bg-white rounded-lg p-4 flex flex-col max-h-96">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold">Comentarios</h3>
+          <div className="rounded-2xl border border-white/10 bg-black/30 p-4 text-white">
+            <div className="flex items-center justify-between">
               <button
                 onClick={() => setShowComments(!showComments)}
-                className="text-primary-600 text-sm"
+                className="text-xs uppercase tracking-[0.3em] text-white/70 transition hover:text-white"
               >
                 {showComments ? 'Ocultar' : 'Mostrar'}
               </button>
+              <span className="text-sm text-white/70">
+                {photo.likesCount} likes · {photo.commentsCount} comentarios
+              </span>
             </div>
 
             {showComments && (
               <>
-                {/* Comment Input */}
-                <div className="flex items-center space-x-2 mb-4">
+                <div className="mb-4 mt-3 flex items-center gap-2">
                   <input
                     type="text"
                     value={commentText}
                     onChange={(e) => setCommentText(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && onComment()}
                     placeholder="Escribe un comentario..."
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                    className="flex-1 rounded-2xl border border-outline/40 bg-surface px-3 py-2 text-sm text-content placeholder:text-content-muted focus:border-brand focus:outline-none focus:ring-0"
                   />
                   <button
                     onClick={onComment}
-                    className="p-2 text-primary-600 hover:text-primary-700"
+                    className="rounded-full border border-outline/40 p-2 text-brand transition hover:border-brand hover:text-brand"
                   >
                     <Send className="h-5 w-5" />
                   </button>
                 </div>
 
-                {/* Comments List */}
-                <div className="flex-1 overflow-y-auto space-y-3">
-                  {/* Aquí irían los comentarios reales */}
-                  <div className="text-center text-gray-500 py-8">
+                <div className="flex-1 space-y-3 overflow-y-auto rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/80">
+                  <div className="text-center text-white/60">
                     No hay comentarios aún
                   </div>
                 </div>
               </>
             )}
           </div>
-        </div>
 
-        {/* Caption */}
-        {photo.caption && (
-          <div className="text-white text-center mt-4">
-            <p>{photo.caption}</p>
-          </div>
-        )}
+          {photo.caption && (
+            <div className="text-center text-white/80">
+              <p>{photo.caption}</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 };
-
 export default PartyGallery;

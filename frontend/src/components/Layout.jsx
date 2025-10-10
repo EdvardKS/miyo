@@ -1,127 +1,114 @@
 import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Camera, Search, TrendingUp, PlusCircle, User, LogOut, Home } from 'lucide-react';
+import {
+  Camera,
+  Search,
+  TrendingUp,
+  PlusCircle,
+  User,
+  Home,
+  Settings,
+} from 'lucide-react';
 
 const Layout = ({ children }) => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+  const navItems = [
+    { path: '/', label: 'Inicio', icon: Home },
+    { path: '/top', label: 'Destacados', icon: TrendingUp },
+    { path: '/create', label: 'Crear álbum', icon: PlusCircle },
+    { path: '/search', label: 'Explorar', icon: Search },
+    { path: `/profile/${user?.username ?? ''}`, label: 'Perfil', icon: User },
+  ];
 
-  const isActive = (path) => {
-    return location.pathname === path;
+  const isActive = (targetPath) => {
+    if (targetPath === '/') {
+      return location.pathname === '/';
+    }
+    return location.pathname.startsWith(targetPath);
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#0f0f0f] text-gray-900 dark:text-gray-100">
-      {/* Header */}
-      <header className="bg-white/80 dark:bg-[#0f0f0f]/80 backdrop-blur shadow-sm border-b border-gray-200 dark:border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link to="/" className="flex items-center space-x-2">
-              <Camera className="h-8 w-8 text-primary-500" />
-              <span className="text-xl font-bold">Álbumes</span>
-            </Link>
-
-            <nav className="hidden md:flex space-x-8">
-              <Link
-                to="/"
-                className={`flex items-center space-x-1 px-3 h-9 rounded-md text-sm font-medium transition-colors ${
-                  isActive('/') 
-                    ? 'text-primary-700 dark:text-primary-400 bg-primary-50/70 dark:bg-white/10' 
-                    : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400'
-                }`}
-              >
-                <Home className="h-4 w-4" />
-                <span>Feed</span>
-              </Link>
-              <Link
-                to="/top"
-                className={`flex items-center space-x-1 px-3 h-9 rounded-md text-sm font-medium transition-colors ${
-                  isActive('/top') 
-                    ? 'text-primary-700 dark:text-primary-400 bg-primary-50/70 dark:bg-white/10' 
-                    : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400'
-                }`}
-              >
-                <TrendingUp className="h-4 w-4" />
-                <span>Top</span>
-              </Link>
-              <Link
-                to="/create"
-                className={`flex items-center space-x-1 px-3 h-9 rounded-md text-sm font-medium transition-colors ${
-                  isActive('/create') 
-                    ? 'text-primary-700 dark:text-primary-400 bg-primary-50/70 dark:bg-white/10' 
-                    : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400'
-                }`}
-              >
-                <PlusCircle className="h-4 w-4" />
-                <span>Crear álbum</span>
-              </Link>
-              <Link
-                to={`/profile/${user?.username}`}
-                className={`flex items-center space-x-1 px-3 h-9 rounded-md text-sm font-medium transition-colors ${
-                  isActive(`/profile/${user?.username}`) 
-                    ? 'text-primary-700 dark:text-primary-400 bg-primary-50/70 dark:bg-white/10' 
-                    : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400'
-                }`}
-              >
-                <User className="h-4 w-4" />
-                <span>Perfil</span>
-              </Link>
-              <form action="/search" className="flex items-center">
-                <input name="q" type="search" placeholder="Buscar usuarios" className="px-3 h-9 text-sm border rounded-l-md border-gray-300 dark:border-white/10 bg-white dark:bg-[#0f0f0f] focus:outline-none focus:ring-2 focus:ring-primary-500/50" />
-                <button className="px-3 h-9 bg-primary-600 text-white rounded-r-md hover:bg-primary-700"><Search className="h-4 w-4" /></button>
-              </form>
-              {/* Unirse a álbum por código */}
-              <form onSubmit={(e)=>{e.preventDefault(); const code=e.currentTarget.code.value.trim().toUpperCase(); if(code){ navigate(`/gallery/${code}`); }}} className="flex items-center">
-                <input name="code" type="text" placeholder="Código álbum" className="px-3 h-9 text-sm border rounded-l-md border-gray-300 dark:border-white/10 bg-white dark:bg-[#0f0f0f] focus:outline-none focus:ring-2 focus:ring-primary-500/50 uppercase" />
-                <button className="px-3 h-9 bg-primary-500 text-black rounded-r-md hover:bg-primary-600">Ir</button>
-              </form>
-            </nav>
-
-            <div className="flex items-center space-x-4">
-              <span className="text-sm">Hola, {user?.username}</span>
-              <button
-                onClick={handleLogout}
-                className="flex items-center space-x-1 hover:text-primary-600 dark:hover:text-primary-400"
-              >
-                <LogOut className="h-4 w-4" />
-                <span className="hidden sm:inline">Salir</span>
-              </button>
+    <div className="min-h-screen text-content flex flex-col">
+      <header className="sticky top-0 z-40 border-b border-outline/40 bg-surface/80 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <Link to="/" className="flex items-center gap-3">
+            <span className="flex size-11 items-center justify-center rounded-2xl bg-surface-muted/60 border border-outline/50 shadow-soft">
+              <Camera className="h-6 w-6 text-brand-500" />
+            </span>
+            <div className="flex flex-col">
+              <span className="text-lg font-semibold tracking-tight">EventsCatch</span>
+              <span className="text-xs uppercase tracking-[0.2em] text-content-muted">
+                Álbumes inteligentes
+              </span>
             </div>
+          </Link>
+
+          <nav className="hidden items-center gap-2 rounded-full border border-outline/40 bg-surface-muted/60 px-2 py-2 backdrop-blur-lg md:flex">
+            {navItems.map(({ path, label, icon: Icon }) => {
+              const active = isActive(path);
+              return (
+                <Link
+                  key={path}
+                  to={path}
+                  className={`group flex size-10 items-center justify-center rounded-full transition ${
+                    active
+                      ? 'bg-brand text-[color:var(--color-on-accent)] shadow-soft'
+                      : 'text-content-muted hover:text-content'
+                  }`}
+                  title={label}
+                >
+                  <Icon className="h-5 w-5" />
+                  <span className="sr-only">{label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="flex items-center gap-4">
+            <Link
+              to={`/profile/${user?.username ?? ''}`}
+              title="Perfil"
+              className="flex size-10 items-center justify-center rounded-full border border-outline/40 bg-surface-muted text-content transition hover:border-brand hover:text-brand"
+            >
+              <User className="h-5 w-5" />
+              <span className="sr-only">Perfil</span>
+            </Link>
+            <Link
+              to={`/profile/${user?.username ?? ''}#ajustes`}
+              title="Ajustes rápidos"
+              className="flex size-10 items-center justify-center rounded-full border border-outline/40 bg-surface-muted text-content transition hover:border-brand hover:text-brand"
+            >
+              <Settings className="h-5 w-5" />
+              <span className="sr-only">Ajustes</span>
+            </Link>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="mx-auto flex w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
         {children}
       </main>
 
-      {/* Mobile Navigation - solo iconos */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-[#0f0f0f]/90 backdrop-blur border-t border-gray-200 dark:border-white/10">
-        <div className="grid grid-cols-5">
-          <Link to="/" className={`flex items-center justify-center py-2 ${isActive('/') ? 'text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-300'}`}>
-            <Home className="h-6 w-6" />
-          </Link>
-          <Link to="/top" className={`flex items-center justify-center py-2 ${isActive('/top') ? 'text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-300'}`}>
-            <TrendingUp className="h-6 w-6" />
-          </Link>
-          <Link to="/create" className={`flex items-center justify-center py-2 ${isActive('/create') ? 'text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-300'}`}>
-            <PlusCircle className="h-6 w-6" />
-          </Link>
-          <Link to="/search" className={`flex items-center justify-center py-2 ${isActive('/search') ? 'text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-300'}`}>
-            <Search className="h-6 w-6" />
-          </Link>
-          <Link to={`/profile/${user?.username}`} className={`flex items-center justify-center py-2 ${isActive(`/profile/${user?.username}`) ? 'text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-300'}`}>
-            <User className="h-6 w-6" />
-          </Link>
-        </div>
+      <nav className="fixed bottom-5 left-1/2 z-40 flex w-[92%] max-w-xl -translate-x-1/2 items-center justify-around rounded-full border border-outline/40 bg-surface/90 px-3 py-3 backdrop-blur-xl shadow-soft md:hidden">
+        {navItems.map(({ path, label, icon: Icon }) => {
+          const active = isActive(path);
+          return (
+            <Link
+              key={path}
+              to={path}
+              title={label}
+              className={`flex size-12 items-center justify-center rounded-full transition ${
+                active ? 'text-brand' : 'text-content-muted hover:text-content'
+              }`}
+            >
+              <Icon className="h-5 w-5" />
+              <span className="sr-only">{label}</span>
+            </Link>
+          );
+        })}
       </nav>
     </div>
   );

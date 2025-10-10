@@ -1,10 +1,24 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
-import { partyService } from '../services/partyService';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { MapPin, Calendar, Users, Lock, Globe, Camera, Plus } from 'lucide-react';
+import {
+  MapPin,
+  Calendar,
+  Users,
+  Lock,
+  Globe,
+  Camera,
+  Plus,
+  Sparkles,
+} from 'lucide-react';
+import { partyService } from '../services/partyService';
+
+const inputBaseClass =
+  'w-full rounded-2xl border border-outline/40 bg-surface-muted px-4 py-3 text-sm text-content placeholder:text-content-muted focus:border-brand focus:outline-none focus:ring-0 focus:shadow-focus transition';
+
+const errorClass = 'mt-2 text-xs font-medium text-danger';
 
 const CreateParty = () => {
   const navigate = useNavigate();
@@ -18,9 +32,27 @@ const CreateParty = () => {
     formState: { errors },
     setValue,
     watch,
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      title: '',
+      description: '',
+      isPrivate: 'true',
+      startDate: '',
+      endDate: '',
+      location: {
+        name: '',
+        address: '',
+        coordinates: {
+          lat: '',
+          lng: '',
+        },
+      },
+      maxParticipants: '',
+    },
+  });
 
-  const isPrivate = watch('isPrivate', true);
+  const privacySelection = watch('isPrivate', 'true');
+  const isPrivate = privacySelection !== 'false';
 
   const createPartyMutation = useMutation(partyService.createParty, {
     onSuccess: (data) => {
@@ -36,33 +68,37 @@ const CreateParty = () => {
 
   const getCurrentLocation = () => {
     setGettingLocation(true);
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setLocation({ lat: latitude, lng: longitude });
-          setValue('location.coordinates.lat', latitude);
-          setValue('location.coordinates.lng', longitude);
-          setGettingLocation(false);
-          toast.success('Ubicación obtenida');
-        },
-        (error) => {
-          toast.error('No se pudo obtener la ubicación');
-          setGettingLocation(false);
-        }
-      );
-    } else {
+    if (!navigator.geolocation) {
       toast.error('Tu navegador no soporta geolocalización');
       setGettingLocation(false);
+      return;
     }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setLocation({ lat: latitude, lng: longitude });
+        setValue('location.coordinates.lat', latitude);
+        setValue('location.coordinates.lng', longitude);
+        setGettingLocation(false);
+        toast.success('Ubicación obtenida correctamente');
+      },
+      () => {
+        toast.error('No se pudo obtener la ubicación');
+        setGettingLocation(false);
+      },
+    );
   };
 
   const onSubmit = (data) => {
     const partyData = {
       ...data,
+      isPrivate: data.isPrivate !== 'false',
+      maxParticipants: data.maxParticipants ? Number(data.maxParticipants) : undefined,
       startDate: new Date(data.startDate),
       endDate: new Date(data.endDate),
     };
+
     createPartyMutation.mutate(partyData);
   };
 
@@ -73,22 +109,53 @@ const CreateParty = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Crear Nueva Fiesta</h1>
-        <p className="text-gray-600">
-          Organiza un evento y comparte los mejores momentos con tus amigos
-        </p>
-      </div>
-
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Información Básica */}
+    <div className="flex w-full flex-col gap-8">
+      <header className="ui-card border border-outline/30 px-6 py-8 sm:px-10">
+        <div className="flex flex-wrap items-start justify-between gap-6">
           <div className="space-y-4">
+            <span className="ui-chip">
+              <Camera className="h-4 w-4" />
+              Nuevo álbum colaborativo
+            </span>
+            <div className="space-y-3">
+              <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+                Diseña la próxima experiencia inolvidable
+              </h1>
+              <p className="max-w-2xl text-sm text-content-muted sm:text-base">
+                Define todos los detalles de tu evento y comparte el código con tus invitados.
+                Gestiona privacidad, ubicación y horarios desde un mismo lugar.
+              </p>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-dashed border-brand/50 bg-accent/10 px-4 py-3 text-sm text-brand shadow-soft">
+            Código generado automáticamente al crear tu fiesta
+          </div>
+        </div>
+        <div className="gradient-divider mt-8" />
+        <div className="mt-6 grid gap-4 sm:grid-cols-3">
+          {[
+            { icon: Calendar, label: 'Eventos planificados', value: 'Sin límites' },
+            { icon: Users, label: 'Colaboradores', value: 'Invita con un código' },
+            { icon: Sparkles, label: 'Moderación', value: 'Control total del álbum' },
+          ].map(({ icon: Icon, label, value }) => (
+            <div key={label} className="flex items-center gap-3 rounded-2xl bg-surface-muted px-4 py-3">
+              <span className="flex size-10 items-center justify-center rounded-xl bg-accent/10 text-brand">
+                <Icon className="h-5 w-5" />
+              </span>
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-content-muted">{label}</p>
+                <p className="text-sm font-medium text-content">{value}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </header>
+
+      <section className="ui-card border border-outline/30 px-6 py-8 sm:px-10">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
+          <div className="grid gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Título de la Fiesta *
-              </label>
+              <Label>Nombre del evento *</Label>
               <input
                 {...register('title', {
                   required: 'El título es requerido',
@@ -98,18 +165,14 @@ const CreateParty = () => {
                   },
                 })}
                 type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                placeholder="Mi Fiesta Increíble"
+                className={inputBaseClass}
+                placeholder="Summer Golden Nights"
               />
-              {errors.title && (
-                <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
-              )}
+              {errors.title && <p className={errorClass}>{errors.title.message}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Descripción
-              </label>
+              <Label>Descripción</Label>
               <textarea
                 {...register('description', {
                   maxLength: {
@@ -117,183 +180,184 @@ const CreateParty = () => {
                     message: 'Máximo 500 caracteres',
                   },
                 })}
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                placeholder="Describe tu fiesta..."
+                rows={4}
+                className={`${inputBaseClass} resize-none`}
+                placeholder="Comparte el vibe del evento, dress code o dinámica principal..."
               />
-              {errors.description && (
-                <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
-              )}
+              {errors.description && <p className={errorClass}>{errors.description.message}</p>}
             </div>
           </div>
 
-          {/* Fechas */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Calendar className="inline h-4 w-4 mr-1" />
-                Fecha y Hora de Inicio *
-              </label>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label icon={Calendar}>Inicio *</Label>
               <input
                 {...register('startDate', {
                   required: 'La fecha de inicio es requerida',
                 })}
                 type="datetime-local"
                 min={setMinDateTime()}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                className={inputBaseClass}
               />
-              {errors.startDate && (
-                <p className="mt-1 text-sm text-red-600">{errors.startDate.message}</p>
-              )}
+              {errors.startDate && <p className={errorClass}>{errors.startDate.message}</p>}
             </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Calendar className="inline h-4 w-4 mr-1" />
-                Fecha y Hora de Fin *
-              </label>
+            <div className="space-y-2">
+              <Label icon={Calendar}>Fin *</Label>
               <input
                 {...register('endDate', {
                   required: 'La fecha de fin es requerida',
                 })}
                 type="datetime-local"
                 min={setMinDateTime()}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                className={inputBaseClass}
               />
-              {errors.endDate && (
-                <p className="mt-1 text-sm text-red-600">{errors.endDate.message}</p>
-              )}
+              {errors.endDate && <p className={errorClass}>{errors.endDate.message}</p>}
             </div>
           </div>
 
-          {/* Ubicación */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <label className="block text-sm font-medium text-gray-700">
-                <MapPin className="inline h-4 w-4 mr-1" />
-                Ubicación *
-              </label>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <Label icon={MapPin}>Ubicación *</Label>
               <button
                 type="button"
                 onClick={getCurrentLocation}
                 disabled={gettingLocation}
-                className="text-sm text-primary-600 hover:text-primary-700 disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-full border border-outline/40 px-4 py-2 text-sm font-semibold text-content-secondary transition hover:border-brand hover:text-brand disabled:cursor-not-allowed disabled:text-content-muted"
               >
-                {gettingLocation ? 'Obteniendo...' : 'Usar mi ubicación actual'}
+                {gettingLocation ? (
+                  <>
+                    <span className="spinner" />
+                    Obteniendo ubicación...
+                  </>
+                ) : (
+                  <>
+                    <MapPin className="h-4 w-4" />
+                    Usar mi ubicación
+                  </>
+                )}
               </button>
             </div>
 
-            <div>
-              <input
-                {...register('location.name', {
-                  required: 'El nombre del lugar es requerido',
-                })}
-                type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 mb-2"
-                placeholder="Nombre del lugar"
-              />
-              {errors.location?.name && (
-                <p className="mt-1 text-sm text-red-600">{errors.location.name.message}</p>
-              )}
+            {location && (
+              <div className="rounded-2xl border border-brand/50 bg-accent/10 px-4 py-2 text-xs text-brand">
+                Ubicación detectada: lat {location.lat.toFixed(4)}, lng {location.lng.toFixed(4)}
+              </div>
+            )}
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <input
+                  {...register('location.name', {
+                    required: 'El nombre del lugar es requerido',
+                  })}
+                  type="text"
+                  className={inputBaseClass}
+                  placeholder="Lugar del evento"
+                />
+                {errors.location?.name && (
+                  <p className={errorClass}>{errors.location.name.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <input
+                  {...register('location.address', {
+                    required: 'La dirección es requerida',
+                  })}
+                  type="text"
+                  className={inputBaseClass}
+                  placeholder="Dirección o referencia"
+                />
+                {errors.location?.address && (
+                  <p className={errorClass}>{errors.location.address.message}</p>
+                )}
+              </div>
             </div>
 
-            <div>
-              <input
-                {...register('location.address', {
-                  required: 'La dirección es requerida',
-                })}
-                type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                placeholder="Dirección completa"
-              />
-              {errors.location?.address && (
-                <p className="mt-1 text-sm text-red-600">{errors.location.address.message}</p>
-              )}
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
                 <input
                   {...register('location.coordinates.lat', {
                     required: 'La latitud es requerida',
                   })}
                   type="number"
                   step="any"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  className={inputBaseClass}
                   placeholder="Latitud"
                 />
                 {errors.location?.coordinates?.lat && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.location.coordinates.lat.message}
-                  </p>
+                  <p className={errorClass}>{errors.location.coordinates.lat.message}</p>
                 )}
               </div>
-              <div>
+              <div className="space-y-2">
                 <input
                   {...register('location.coordinates.lng', {
                     required: 'La longitud es requerida',
                   })}
                   type="number"
                   step="any"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  className={inputBaseClass}
                   placeholder="Longitud"
                 />
                 {errors.location?.coordinates?.lng && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.location.coordinates.lng.message}
-                  </p>
+                  <p className={errorClass}>{errors.location.coordinates.lng.message}</p>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Privacidad */}
-          <div className="space-y-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Privacidad de la Fiesta
-            </label>
-            
-            <div className="space-y-3">
-              <label className="flex items-center p-3 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">
-                <input
-                  {...register('isPrivate')}
-                  type="radio"
-                  value={true}
-                  className="mr-3"
-                />
-                <Lock className="h-5 w-5 text-gray-600 mr-2" />
-                <div>
-                  <div className="font-medium">Privada</div>
-                  <div className="text-sm text-gray-600">
-                    Solo usuarios invitados pueden unirse
-                  </div>
-                </div>
-              </label>
-
-              <label className="flex items-center p-3 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">
-                <input
-                  {...register('isPrivate')}
-                  type="radio"
-                  value={false}
-                  className="mr-3"
-                />
-                <Globe className="h-5 w-5 text-gray-600 mr-2" />
-                <div>
-                  <div className="font-medium">Pública</div>
-                  <div className="text-sm text-gray-600">
-                    Cualquiera con el código puede unirse
-                  </div>
-                </div>
-              </label>
+          <div className="space-y-3">
+            <Label>Privacidad del álbum</Label>
+            <div className="grid gap-3 md:grid-cols-2">
+              {[
+                {
+                  value: 'true',
+                  title: 'Privada',
+                  description: 'Solo quienes invites podrán unirse y subir recuerdos.',
+                  icon: Lock,
+                },
+                {
+                  value: 'false',
+                  title: 'Pública',
+                  description: 'Cualquiera con el código puede participar.',
+                  icon: Globe,
+                },
+              ].map(({ value, title, description, icon: Icon }) => {
+                const active = privacySelection === value;
+                return (
+                  <label
+                    key={value}
+                    className={`flex cursor-pointer items-start gap-4 rounded-2xl border px-5 py-4 transition ${
+                      active
+                        ? 'border-brand bg-accent/10 shadow-soft'
+                        : 'border-outline/40 bg-surface-muted hover:border-brand/60'
+                    }`}
+                  >
+                    <input
+                      {...register('isPrivate')}
+                      type="radio"
+                      value={value}
+                      className="sr-only"
+                    />
+                    <span
+                      className={`mt-1 flex size-9 items-center justify-center rounded-xl border ${
+                        active ? 'border-brand bg-accent/20 text-brand' : 'border-outline/40 text-content-muted'
+                      }`}
+                    >
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    <span className="space-y-1.5">
+                      <span className="block text-sm font-semibold text-content">{title}</span>
+                      <span className="block text-xs text-content-muted">{description}</span>
+                    </span>
+                  </label>
+                );
+              })}
             </div>
           </div>
 
-          {/* Participantes (opcional) */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Users className="inline h-4 w-4 mr-1" />
-              Máximo de Participantes (opcional)
-            </label>
+            <Label icon={Users}>Máximo de participantes (opcional)</Label>
             <input
               {...register('maxParticipants', {
                 min: {
@@ -302,38 +366,50 @@ const CreateParty = () => {
                 },
               })}
               type="number"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-              placeholder="Dejar en blanco para ilimitado"
+              className={inputBaseClass}
+              placeholder="Deja vacío para ilimitado"
             />
             {errors.maxParticipants && (
-              <p className="mt-1 text-sm text-red-600">{errors.maxParticipants.message}</p>
+              <p className={errorClass}>{errors.maxParticipants.message}</p>
             )}
           </div>
 
-          {/* Botón de envío */}
-          <div>
+          <div className="gradient-divider" />
+
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-xs text-content-muted">
+              Una vez publicado, podrás compartir el código y gestionar participantes desde la
+              galería en tiempo real.
+            </p>
             <button
               type="submit"
               disabled={createPartyMutation.isLoading}
-              className="w-full flex justify-center items-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center justify-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-[color:var(--color-on-accent)] shadow-soft transition hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-70"
             >
               {createPartyMutation.isLoading ? (
                 <>
-                  <div className="spinner mr-2"></div>
-                  Creando Fiesta...
+                  <span className="spinner" />
+                  Creando álbum...
                 </>
               ) : (
                 <>
-                  <Plus className="h-5 w-5 mr-2" />
-                  Crear Fiesta
+                  <Plus className="h-5 w-5" />
+                  Crear fiesta
                 </>
               )}
             </button>
           </div>
         </form>
-      </div>
+      </section>
     </div>
   );
 };
+
+const Label = ({ children, icon: Icon }) => (
+  <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-content-muted">
+    {Icon ? <Icon className="h-4 w-4 text-brand-500" /> : null}
+    {children}
+  </label>
+);
 
 export default CreateParty;

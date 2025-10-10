@@ -14,76 +14,100 @@ import PartyGallery from './pages/PartyGallery';
 import Profile from './pages/Profile';
 import MyPhotos from './pages/MyPhotos';
 import Privacy from './pages/Privacy';
-import Search from './pages/Search';
+import Search from './pages/Search.jsx';
 import ProtectedRoute from './components/ProtectedRoute';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 const queryClient = new QueryClient();
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <SocketProvider>
-          <Router>
-            <div className="min-h-screen bg-surface">
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/" element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Feed />
-                    </Layout>
-                  </ProtectedRoute>
-                } />
-                <Route path="/top" element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <TopUsers />
-                    </Layout>
-                  </ProtectedRoute>
-                } />
-                <Route path="/create" element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <CreateParty />
-                    </Layout>
-                  </ProtectedRoute>
-                } />
-                <Route path="/gallery/:code" element={
-                  <ProtectedRoute>
-                    <PartyGallery />
-                  </ProtectedRoute>
-                } />
-                <Route path="/profile/:username?" element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Profile />
-                    </Layout>
-                  </ProtectedRoute>
-                } />
-                <Route path="/my-photos" element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <MyPhotos />
-                    </Layout>
-                  </ProtectedRoute>
-                } />
-                <Route path="/privacy" element={<Privacy />} />
-                <Route path="/search" element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Search />
-                    </Layout>
-                  </ProtectedRoute>
-                } />
-              </Routes>
-              <Toaster />
-            </div>
-          </Router>
-        </SocketProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <SocketProvider>
+            <Router>
+              <div className="min-h-screen ui-shell">
+                <Routes>
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route
+                    path="/"
+                    element={(
+                      <ProtectedRoute>
+                        <Layout>
+                          <Feed />
+                        </Layout>
+                      </ProtectedRoute>
+                    )}
+                  />
+                  <Route
+                    path="/top"
+                    element={(
+                      <ProtectedRoute>
+                        <Layout>
+                          <TopUsers />
+                        </Layout>
+                      </ProtectedRoute>
+                    )}
+                  />
+                  <Route
+                    path="/create"
+                    element={(
+                      <ProtectedRoute>
+                        <Layout>
+                          <CreateParty />
+                        </Layout>
+                      </ProtectedRoute>
+                    )}
+                  />
+                  <Route
+                    path="/gallery/:code"
+                    element={(
+                      <ProtectedRoute>
+                        <PartyGallery />
+                      </ProtectedRoute>
+                    )}
+                  />
+                  <Route
+                    path="/profile/:username?"
+                    element={(
+                      <ProtectedRoute>
+                        <Layout>
+                          <Profile />
+                        </Layout>
+                      </ProtectedRoute>
+                    )}
+                  />
+                  <Route
+                    path="/my-photos"
+                    element={(
+                      <ProtectedRoute>
+                        <Layout>
+                          <MyPhotos />
+                        </Layout>
+                      </ProtectedRoute>
+                    )}
+                  />
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route
+                    path="/search"
+                    element={(
+                      <ProtectedRoute>
+                        <Layout>
+                          <Search />
+                        </Layout>
+                      </ProtectedRoute>
+                    )}
+                  />
+                </Routes>
+                <Toaster />
+              </div>
+            </Router>
+          </SocketProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }
 

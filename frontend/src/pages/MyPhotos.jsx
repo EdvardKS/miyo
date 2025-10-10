@@ -25,16 +25,24 @@ const MyPhotos = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="spinner"></div>
+      <div className="flex w-full justify-center">
+        <div className="ui-card flex h-40 w-full max-w-2xl items-center justify-center border border-outline/40">
+          <div className="spinner" />
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center py-8">
-        <p className="text-red-600">Error cargando tus fotos</p>
+      <div className="ui-card mx-auto flex max-w-2xl flex-col items-center gap-3 border border-outline/40 px-8 py-12 text-center">
+        <div className="flex size-14 items-center justify-center rounded-full bg-danger/10 text-danger">
+          <Camera className="h-6 w-6" />
+        </div>
+        <h2 className="text-lg font-semibold">No pudimos cargar tus fotos</h2>
+        <p className="max-w-md text-sm text-content-muted">
+          Actualiza la página para volver a intentarlo.
+        </p>
       </div>
     );
   }
@@ -42,58 +50,77 @@ const MyPhotos = () => {
   const photos = photosData?.photos || [];
 
   return (
-    <div className="max-w-6xl mx-auto">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Mis Fotos</h1>
-        <p className="text-gray-600">
-          Todas las fotos que has subido a las fiestas
-        </p>
-      </div>
+    <div className="flex w-full flex-col gap-8">
+      <section className="ui-card border border-outline/30 px-6 py-8 sm:px-10">
+        <div className="flex flex-wrap items-start justify-between gap-6">
+          <div>
+            <span className="ui-chip">
+              <Camera className="h-4 w-4" />
+              Archivo personal
+            </span>
+            <h1 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">Mis fotos</h1>
+            <p className="mt-2 max-w-2xl text-sm text-content-muted sm:text-base">
+              Aquí encuentras cada recuerdo que has subido a tus fiestas y colaboraciones. Cambia de
+              vista para explorar tus momentos desde otra perspectiva.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-outline/40 bg-surface-muted px-4 py-3 text-sm text-content-secondary">
+            Total de aportes <span className="ml-2 text-lg font-semibold text-content">{photos.length}</span>
+          </div>
+        </div>
+      </section>
 
-      {/* Controls */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-2">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="inline-flex items-center rounded-full border border-outline/40 bg-surface-muted p-1">
           <button
             onClick={() => setViewMode('grid')}
-            className={`p-2 rounded-md ${viewMode === 'grid' ? 'bg-primary-100 text-primary-600' : 'text-gray-600 hover:text-gray-900'}`}
+            className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
+              viewMode === 'grid'
+                ? 'bg-brand text-[color:var(--color-on-accent)] shadow-soft'
+                : 'text-content-muted hover:text-content'
+            }`}
           >
-            <LayoutGrid className="h-5 w-5" />
+            <LayoutGrid className="h-4 w-4" />
+            Cuadrícula
           </button>
           <button
             onClick={() => setViewMode('list')}
-            className={`p-2 rounded-md ${viewMode === 'list' ? 'bg-primary-100 text-primary-600' : 'text-gray-600 hover:text-gray-900'}`}
+            className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
+              viewMode === 'list'
+                ? 'bg-brand text-[color:var(--color-on-accent)] shadow-soft'
+                : 'text-content-muted hover:text-content'
+            }`}
           >
-            <List className="h-5 w-5" />
+            <List className="h-4 w-4" />
+            Detalle
           </button>
         </div>
 
-        <div className="text-sm text-gray-600">
-          {photos.length} fotos totales
-        </div>
+        <p className="rounded-full border border-outline/40 bg-surface-muted px-4 py-2 text-sm text-content-secondary">
+          {photos.length} recuerdos capturados
+        </p>
       </div>
 
-      {/* Content */}
       {photos.length === 0 ? (
-        <div className="text-center py-12">
-          <Camera className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
-            No tienes fotos aún
-          </h3>
-          <p className="text-gray-600 mb-4">
-            Únete a fiestas y empieza a capturar momentos
+        <div className="ui-card flex flex-col items-center gap-4 border border-outline/30 px-6 py-14 text-center">
+          <div className="flex size-20 items-center justify-center rounded-full border border-dashed border-outline/60 bg-surface-muted text-brand">
+            <Camera className="h-10 w-10" />
+          </div>
+          <h3 className="text-xl font-semibold">Aún no hay recuerdos</h3>
+          <p className="max-w-lg text-sm text-content-muted">
+            Únete a fiestas y empieza a compartir fotos y videos que cuenten tus historias.
           </p>
           <Link
             to="/top"
-            className="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
+            className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-[color:var(--color-on-accent)] shadow-soft transition hover:shadow-lg"
           >
-            Descubrir Fiestas
+            Descubrir fiestas activas
           </Link>
         </div>
       ) : (
         <>
           {viewMode === 'grid' ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {photos.map((photo) => (
                 <PhotoGridCard key={photo._id} photo={photo} />
               ))}
@@ -106,24 +133,23 @@ const MyPhotos = () => {
             </div>
           )}
 
-          {/* Pagination */}
           {photosData?.pagination && photosData.pagination.pages > 1 && (
-            <div className="mt-8 flex justify-center">
-              <nav className="flex items-center space-x-2">
+            <div className="flex justify-center">
+              <nav className="mt-8 inline-flex items-center gap-3 rounded-full border border-outline/40 bg-surface-muted px-3 py-2">
                 <button
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="rounded-full px-4 py-2 text-sm font-medium text-content-secondary transition hover:text-content disabled:cursor-not-allowed disabled:text-content-muted"
                 >
                   Anterior
                 </button>
-                <span className="px-3 py-2 text-sm font-medium text-gray-700">
+                <span className="rounded-full bg-accent/10 px-4 py-2 text-sm font-semibold text-brand">
                   Página {page} de {photosData.pagination.pages}
                 </span>
                 <button
-                  onClick={() => setPage(p => Math.min(photosData.pagination.pages, p + 1))}
+                  onClick={() => setPage((p) => Math.min(photosData.pagination.pages, p + 1))}
                   disabled={page === photosData.pagination.pages}
-                  className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="rounded-full px-4 py-2 text-sm font-medium text-content-secondary transition hover:text-content disabled:cursor-not-allowed disabled:text-content-muted"
                 >
                   Siguiente
                 </button>
@@ -140,12 +166,12 @@ const PhotoGridCard = ({ photo }) => {
   const isVideo = photo.mimeType.startsWith('video/');
   
   return (
-    <div className="relative group cursor-pointer">
-      <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+    <div className="group relative cursor-pointer overflow-hidden rounded-3xl border border-outline/40 bg-surface shadow-soft transition hover:-translate-y-1">
+      <div className="aspect-square overflow-hidden">
         {isVideo ? (
           <video
             src={photo.url}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
             muted
             onMouseEnter={(e) => e.target.play()}
             onMouseLeave={(e) => e.target.pause()}
@@ -154,31 +180,37 @@ const PhotoGridCard = ({ photo }) => {
           <img
             src={photo.thumbnailUrl || photo.url}
             alt={photo.caption}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
           />
         )}
       </div>
-      
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all rounded-lg">
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="flex items-center space-x-4 mb-2">
-            <div className="flex items-center space-x-1">
-              <Heart className="h-5 w-5" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <div className="absolute inset-0 flex flex-col justify-between p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+        <div className="flex items-center justify-end gap-3 text-xs font-medium text-white">
+          {isVideo ? (
+            <span className="rounded-full bg-white/20 px-3 py-1 backdrop-blur-sm">Video</span>
+          ) : null}
+          <span className="rounded-full bg-white/20 px-3 py-1 backdrop-blur-sm">
+            {new Date(photo.createdAt).toLocaleDateString()}
+          </span>
+        </div>
+        <div className="space-y-3 text-white drop-shadow">
+          <div className="flex items-center gap-4 text-sm">
+            <div className="flex items-center gap-1.5">
+              <Heart className="h-4 w-4" />
               <span>{photo.likesCount}</span>
             </div>
-            <div className="flex items-center space-x-1">
-              <MessageCircle className="h-5 w-5" />
+            <div className="flex items-center gap-1.5">
+              <MessageCircle className="h-4 w-4" />
               <span>{photo.commentsCount}</span>
             </div>
           </div>
-          <div className="text-xs text-center">
-            <p className="font-medium truncate max-w-full px-2">
-              {photo.party.title}
-            </p>
-            <p className="opacity-75">
-              {new Date(photo.createdAt).toLocaleDateString()}
-            </p>
+          <div>
+            <p className="text-xs uppercase tracking-[0.2em] text-white/70">Álbum</p>
+            <p className="text-sm font-semibold">{photo.party.title}</p>
+            {photo.caption && (
+              <p className="text-xs text-white/80 line-clamp-2">{photo.caption}</p>
+            )}
           </div>
         </div>
       </div>
@@ -196,70 +228,66 @@ const PhotoListCard = ({ photo }) => {
   const isVideo = photo.mimeType.startsWith('video/');
   
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-      <div className="flex">
-        {/* Thumbnail */}
-        <div className="w-32 h-32 bg-gray-200 flex-shrink-0">
+    <div className="ui-card overflow-hidden border border-outline/40">
+      <div className="flex flex-col gap-4 md:flex-row">
+        <div className="h-48 w-full bg-surface-muted md:h-auto md:w-52">
           {isVideo ? (
             <video
               src={photo.url}
-              className="w-full h-full object-cover"
+              className="h-full w-full object-cover"
               muted
             />
           ) : (
             <img
               src={photo.thumbnailUrl || photo.url}
               alt={photo.caption}
-              className="w-full h-full object-cover"
+              className="h-full w-full object-cover"
             />
           )}
         </div>
 
-        {/* Info */}
-        <div className="flex-1 p-4">
-          <div className="flex items-start justify-between mb-2">
-            <div>
-              <h3 className="font-medium text-gray-900 mb-1">
-                {photo.party.title}
-              </h3>
-              <p className="text-sm text-gray-600 mb-2">
-                Código: <span className="font-mono">{photo.party.code}</span>
+        <div className="flex flex-1 flex-col gap-4 px-5 pb-5 pt-5">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="space-y-1">
+              <h3 className="text-lg font-semibold text-content">{photo.party.title}</h3>
+              <p className="text-xs uppercase tracking-[0.3em] text-content-muted">
+                Código · <span className="font-mono text-sm text-content">{photo.party.code}</span>
               </p>
             </div>
             {isVideo && (
-              <span className="px-2 py-1 text-xs font-medium text-blue-600 bg-blue-100 rounded">
+              <span className="rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-brand">
                 Video
               </span>
             )}
           </div>
 
           {photo.caption && (
-            <p className="text-gray-700 text-sm mb-3 line-clamp-2">
+            <p className="text-sm text-content-muted line-clamp-2">
               {photo.caption}
             </p>
           )}
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4 text-sm text-gray-500">
-              <div className="flex items-center space-x-1">
-                <Heart className="h-4 w-4" />
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-content-muted">
+              <div className="flex items-center gap-1.5">
+                <Heart className="h-4 w-4 text-brand-500" />
                 <span>{photo.likesCount}</span>
               </div>
-              <div className="flex items-center space-x-1">
-                <MessageCircle className="h-4 w-4" />
+              <div className="flex items-center gap-1.5">
+                <MessageCircle className="h-4 w-4 text-brand-500" />
                 <span>{photo.commentsCount}</span>
               </div>
-              <div className="flex items-center space-x-1">
-                <Calendar className="h-4 w-4" />
+              <div className="flex items-center gap-1.5">
+                <Calendar className="h-4 w-4 text-brand-500" />
                 <span>{new Date(photo.createdAt).toLocaleDateString()}</span>
               </div>
             </div>
 
             <Link
               to={`/gallery/${photo.party.code}`}
-              className="inline-flex items-center px-3 py-1 text-sm font-medium text-primary-700 bg-primary-100 hover:bg-primary-200 rounded"
+              className="inline-flex items-center gap-2 rounded-full border border-outline/40 px-4 py-2 text-sm font-semibold text-content transition hover:border-brand hover:text-brand"
             >
-              <Eye className="h-4 w-4 mr-1" />
+              <Eye className="h-4 w-4" />
               Ver
             </Link>
           </div>

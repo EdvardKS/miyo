@@ -1,229 +1,174 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Shield, Lock, Eye, User, Mail, Phone } from 'lucide-react';
+import { Shield, Lock, Eye, User, Mail } from 'lucide-react';
 
-const Privacy = () => {
-  return (
-    <div className="max-w-4xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
-          <Shield className="h-8 w-8 mr-2 text-primary-500" />
-          Política de Privacidad
-        </h1>
-        <p className="text-gray-600">
-          Tu privacidad es importante para nosotros. Esta política explica cómo recopilamos, usamos y protegemos tu información.
+const Section = ({ icon: Icon, title, children }) => (
+  <section className="space-y-3 rounded-2xl border border-outline/30 bg-surface px-6 py-5">
+    <header className="flex items-center gap-3">
+      {Icon ? <Icon className="h-5 w-5 text-brand" /> : null}
+      <h2 className="text-lg font-semibold text-content">{title}</h2>
+    </header>
+    <div className="text-sm leading-relaxed text-content-muted">{children}</div>
+  </section>
+);
+
+const Privacy = () => (
+  <div className="mx-auto flex w-full max-w-4xl flex-col gap-8">
+    <header className="space-y-3 rounded-3xl border border-outline/30 bg-surface px-8 py-10 shadow-soft">
+      <div className="inline-flex items-center gap-3 rounded-full bg-accent/10 px-4 py-2 text-sm font-semibold text-brand">
+        <Shield className="h-5 w-5" />
+        Políticas transparentes
+      </div>
+      <h1 className="text-3xl font-semibold tracking-tight text-content">Política de privacidad</h1>
+      <p className="max-w-2xl text-sm text-content-muted">
+        Nos comprometemos a proteger tus datos y a ofrecerte control total sobre tu información. A continuación
+        te explicamos qué recopilamos, cómo lo usamos y qué opciones tienes.
+      </p>
+    </header>
+
+    <div className="flex flex-col gap-6">
+      <Section icon={Eye} title="Información que recopilamos">
+        <InfoList
+          groups={[
+            {
+              heading: 'Información de cuenta',
+              bullets: [
+                'Email y nombre de usuario',
+                'Contraseña cifrada (bcrypt)',
+                'Avatar y biografía opcionales',
+                'Preferencias de privacidad',
+              ],
+            },
+            {
+              heading: 'Datos de eventos',
+              bullets: [
+                'Álbumes que creas o unes',
+                'Fotos y vídeos compartidos',
+                'Ubicaciones de eventos',
+                'Comentarios e interacciones',
+              ],
+            },
+            {
+              heading: 'Datos técnicos',
+              bullets: [
+                'Dirección IP y dispositivo',
+                'Información de navegador',
+                'Patrones de uso de la app',
+                'Ubicación aproximada',
+              ],
+            },
+          ]}
+        />
+      </Section>
+
+      <Section icon={Lock} title="Cómo usamos tu información">
+        <BulletedList
+          intro="Procesamos tus datos únicamente para:"
+          items={[
+            ['Proporcionar el servicio', 'Gestionar tu cuenta, álbumes y fotos.'],
+            ['Mejorar la experiencia', 'Personalizar recomendaciones y contenido.'],
+            ['Comunicaciones esenciales', 'Notificaciones relevantes sobre tu actividad.'],
+            ['Seguridad', 'Prevenir fraude, abuso y accesos no autorizados.'],
+            ['Análisis', 'Entender el uso de la plataforma y optimizarla.'],
+          ]}
+        />
+      </Section>
+
+      <Section icon={User} title="Control sobre tus datos">
+        <BulletedList
+          intro="Tienes el control total para:"
+          items={[
+            ['Definir visibilidad', 'Alternar entre perfil público o privado, y decidir quién participa.'],
+            ['Gestionar álbumes', 'Crear eventos privados, revocar accesos o eliminar contenidos.'],
+            ['Moderación personal', 'Aceptar seguidores, bloquear usuarios y moderar comentarios.'],
+            ['Derecho al olvido', 'Solicitar la eliminación completa de tus datos.'],
+          ]}
+        />
+      </Section>
+
+      <Section title="Seguridad y retención de datos">
+        <BulletedList
+          intro="Medidas implementadas:"
+          items={[
+            ['Cifrado y transporte seguro', 'Contraseñas encriptadas y conexiones HTTPS.'],
+            ['Autenticación robusta', 'Tokens JWT con expiración y rotación.'],
+            ['Protección activa', 'Limitación de peticiones y validaciones estrictas.'],
+            ['Retención controlada', 'Datos activos mientras uses el servicio; registros técnicos hasta 6 meses.'],
+          ]}
+        />
+      </Section>
+
+      <Section title="Compartición responsable">
+        <BulletedList
+          intro="Solo compartimos tus datos cuando:"
+          items={[
+            ['Das tu consentimiento', 'Expresamente, para funcionalidades específicas.'],
+            ['Lo exige la ley', 'Cumplimiento de obligaciones legales o judiciales.'],
+            ['Proveedores confiables', 'Servicios necesarios (hosting, analítica) bajo acuerdos de tratamiento.'],
+            ['Cambio societario', 'En adquisiciones o fusiones, garantizando protección equivalente.'],
+          ]}
+        />
+      </Section>
+
+      <Section title="Tus derechos">
+        <BulletedList
+          intro="Puedes ejercer en cualquier momento tus derechos de:"
+          items={[
+            ['Acceso y rectificación', 'Revisar y corregir tu información personal.'],
+            ['Portabilidad', 'Recibir tus datos en un formato estructurado.'],
+            ['Oposición o restricción', 'Limitar determinados tratamientos.'],
+            ['Eliminación', 'Solicitar la supresión definitiva de tu cuenta.'],
+          ]}
+        />
+      </Section>
+
+      <Section title="Cookies y preferencias">
+        <p>
+          Usamos cookies esenciales para mantener tu sesión activa, recordar ajustes y analizar el rendimiento.
+          Puedes gestionar tus preferencias desde la configuración del navegador. No utilizamos cookies con fines publicitarios.
         </p>
-      </div>
+      </Section>
 
-      <div className="prose prose-lg max-w-none">
-        <div className="bg-white rounded-lg shadow-md p-8 space-y-8">
-          
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4 flex items-center">
-              <Eye className="h-6 w-6 mr-2 text-primary-500" />
-              Información que Recopilamos
-            </h2>
-            <div className="space-y-4 text-gray-700">
-              <div>
-                <h3 className="font-semibold mb-2">Información de Cuenta:</h3>
-                <ul className="list-disc pl-6 space-y-1">
-                  <li>Email y username</li>
-                  <li>Contraseña encriptada</li>
-                  <li>Foto de perfil (opcional)</li>
-                  <li>Biografía y preferencias de privacidad</li>
-                </ul>
-              </div>
-              
-              <div>
-                <h3 className="font-semibold mb-2">Información de Eventos:</h3>
-                <ul className="list-disc pl-6 space-y-1">
-                  <li>Fiestas que creas y participes</li>
-                  <li>Fotos y videos que subas</li>
-                  <li>Ubicación de eventos</li>
-                  <li>Comentarios y likes</li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="font-semibold mb-2">Información Técnica:</h3>
-                <ul className="list-disc pl-6 space-y-1">
-                  <li>Dirección IP</li>
-                  <li>Tipo de dispositivo y navegador</li>
-                  <li>Datos de uso de la aplicación</li>
-                  <li>Ubicación geográfica aproximada</li>
-                </ul>
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4 flex items-center">
-              <Lock className="h-6 w-6 mr-2 text-primary-500" />
-              Cómo Usamos tu Información
-            </h2>
-            <div className="space-y-3 text-gray-700">
-              <p>Utilizamos tu información para:</p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Proporcionar el servicio:</strong> Crear y gestionar tu cuenta, eventos y fotos</li>
-                <li><strong>Mejorar la experiencia:</strong> Personalizar contenido y sugerir eventos relevantes</li>
-                <li><strong>Comunicación:</strong> Enviar notificaciones importantes sobre tu cuenta</li>
-                <li><strong>Seguridad:</strong> Proteger contra fraudes y abusos</li>
-                <li><strong>Análisis:</strong> Entender cómo usamos la aplicación para mejorarla</li>
-              </ul>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4 flex items-center">
-              <User className="h-6 w-6 mr-2 text-primary-500" />
-              Control de tu Información
-            </h2>
-            <div className="space-y-3 text-gray-700">
-              <p>Tienes control completo sobre tu información:</p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Perfil público/privado:</strong> Elige quién puede ver tu información</li>
-                <li><strong>Eventos privados:</strong> Controla quién puede acceder a tus fiestas</li>
-                <li><strong>Fotos:</strong> Puedes eliminar o ocultar tus fotos en cualquier momento</li>
-                <li><strong>Seguimiento:</strong> Acepta o rechaza solicitudes de seguimiento</li>
-                <li><strong>Eliminar cuenta:</strong> Puedes solicitar la eliminación de tu cuenta y datos</li>
-              </ul>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Seguridad de tus Datos</h2>
-            <div className="space-y-3 text-gray-700">
-              <p>Implementamos medidas de seguridad robustas:</p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Encriptación de contraseñas con bcrypt</li>
-                <li>Conexiones HTTPS seguras</li>
-                <li>Autenticación con tokens JWT</li>
-                <li>Limitación de tasa de solicitudes</li>
-                <li>Validación estricta de datos</li>
-                <li>Backups regulares y seguros</li>
-              </ul>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Compartir Información</h2>
-            <div className="space-y-3 text-gray-700">
-              <p>No vendemos tu información a terceros. Solo compartimos datos cuando:</p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Consentimiento explícito:</strong> Cuando tú lo autorizas</li>
-                <li><strong>Requisitos legales:</strong> Cuando la ley nos obliga</li>
-                <li><strong>Proveedores de servicios:</strong> Con empresas que nos ayudan a operar (hosting, analytics)</li>
-                <li><strong>Transferencia de negocio:</strong> En caso de venta o fusión (con protección de datos)</li>
-              </ul>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Tus Derechos</h2>
-            <div className="space-y-3 text-gray-700">
-              <p>Tienes derecho a:</p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Acceder:</strong> Saber qué información tenemos sobre ti</li>
-                <li><strong>Rectificar:</strong> Corregir información incorrecta</li>
-                <li><strong>Eliminar:</strong> Solicitar eliminación de tus datos</li>
-                <li><strong>Portabilidad:</strong> Recibir tus datos en un formato estructurado</li>
-                <li><strong>Oposición:</strong> Oponerte a ciertos usos de tus datos</li>
-                <li><strong>Restricción:</strong> Limitar el procesamiento de tus datos</li>
-              </ul>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Retención de Datos</h2>
-            <div className="space-y-3 text-gray-700">
-              <p>Conservamos tu información solo el tiempo necesario:</p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Cuentas activas:</strong> Mientras uses el servicio</li>
-                <li><strong>Cuentas inactivas:</strong> 2 años, luego eliminamos datos personales</li>
-                <li><strong>Eventos finalizados:</strong> 1 año después de finalizar</li>
-                <li><strong>Registros del sistema:</strong> 6 meses para fines de seguridad</li>
-                <li><strong>Requisitos legales:</strong> Según lo exija la ley</li>
-              </ul>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Cookies y Tecnologías Similares</h2>
-            <div className="space-y-3 text-gray-700">
-              <p>Usamos cookies para:</p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Mantener tu sesión activa</li>
-                <li>Recordar tus preferencias</li>
-                <li>Analizar el uso de la aplicación</li>
-                <li>Mejorar el rendimiento</li>
-              </ul>
-              <p>Puedes controlar las cookies desde la configuración de tu navegador.</p>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Menores de Edad</h2>
-            <div className="space-y-3 text-gray-700">
-              <p>Nuestro servicio está dirigido a mayores de 16 años. No recopilamos intencionadamente información de menores. Si descubrimos que hemos recopilado información de un menor, la eliminaremos inmediatamente.</p>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Cambios a esta Política</h2>
-            <div className="space-y-3 text-gray-700">
-              <p>Podemos actualizar esta política ocasionalmente. Te notificaremos cambios importantes mediante:</p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Notificación en la aplicación</li>
-                <li>Email a usuarios registrados</li>
-                <li>Aviso prominente en nuestro sitio</li>
-              </ul>
-              <p>El uso continuado de la aplicación después de cambios constituye aceptación de la nueva política.</p>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4 flex items-center">
-              <Mail className="h-6 w-6 mr-2 text-primary-500" />
-              Contacto
-            </h2>
-            <div className="space-y-3 text-gray-700">
-              <p>Para preguntas sobre esta política o ejercer tus derechos:</p>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <p><strong>Email:</strong> privacy@fiestas-app.com</p>
-                <p><strong>Responsable:</strong> Fiestas App</p>
-                <p><strong>Dirección:</strong> [Tu dirección]</p>
-                <p><strong>Teléfono:</strong> [Tu teléfono]</p>
-              </div>
-              <p>Responderemos a tu solicitud en un plazo máximo de 30 días.</p>
-            </div>
-          </section>
-
-          <section className="border-t pt-6">
-            <div className="text-center text-gray-600">
-              <p className="mb-4">
-                <strong>Última actualización:</strong> {new Date().toLocaleDateString('es-ES')}
-              </p>
-              <div className="flex justify-center space-x-4">
-                <Link
-                  to="/"
-                  className="text-primary-600 hover:text-primary-700 font-medium"
-                >
-                  Volver al inicio
-                </Link>
-                <Link
-                  to="/register"
-                  className="text-primary-600 hover:text-primary-700 font-medium"
-                >
-                  Crear cuenta
-                </Link>
-              </div>
-            </div>
-          </section>
-
+      <Section title="Cambios y contacto" icon={Mail}>
+        <p className="mb-4">
+          Te avisaremos mediante notificaciones in-app o correo cuando haya cambios relevantes. Para dudas o solicitudes:
+        </p>
+        <div className="rounded-2xl border border-outline/30 bg-surface-muted px-4 py-3 text-sm text-content">
+          <p><strong>Email:</strong> privacy@eventscatch.com</p>
+          <p><strong>Responsable:</strong> Equipo EventsCatch</p>
+          <p><strong>Tiempo de respuesta:</strong> Máximo 30 días naturales</p>
         </div>
-      </div>
+      </Section>
     </div>
-  );
-};
+  </div>
+);
+
+const InfoList = ({ groups }) => (
+  <div className="grid gap-4 md:grid-cols-2">
+    {groups.map(({ heading, bullets }) => (
+      <div key={heading} className="space-y-2 rounded-2xl border border-outline/30 bg-surface-muted px-4 py-3">
+        <h3 className="text-sm font-semibold text-content">{heading}</h3>
+        <ul className="list-disc space-y-1 pl-5 text-sm text-content-muted">
+          {bullets.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+);
+
+const BulletedList = ({ intro, items }) => (
+  <div className="space-y-3">
+    <p>{intro}</p>
+    <ul className="space-y-2 text-sm text-content">
+      {items.map(([title, description]) => (
+        <li key={title} className="rounded-2xl border border-outline/20 bg-surface-muted px-4 py-3">
+          <span className="font-semibold text-content">{title}:</span>{' '}
+          <span className="text-content-muted">{description}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+);
 
 export default Privacy;

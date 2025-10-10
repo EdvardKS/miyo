@@ -1,0 +1,113 @@
+:root {
+  color-scheme: light;
+
+  /* Brand */
+  --ec-brand-500: #F4A723;
+  --ec-brand-600: #D38512;
+  --ec-brand-400: #FFC153;
+  --ec-brand-100: #FFF3E0;
+
+  /* Neutral scale */
+  --ec-neutral-950: #0F172A;
+  --ec-neutral-900: #111827;
+  --ec-neutral-800: #1E293B;
+  --ec-neutral-700: #334155;
+  --ec-neutral-600: #475569;
+  --ec-neutral-500: #64748B;
+  --ec-neutral-400: #94A3B8;
+  --ec-neutral-300: #CBD5F5;
+  --ec-neutral-200: #DDE3FF;
+  --ec-neutral-100: #EEF2FF;
+
+  /* Backgrounds & surfaces */
+  --ec-bg-body: #F5F7FB;
+  --ec-surface: #FFFFFF;
+  --ec-surface-elevated: #F8FAFF;
+  --ec-surface-muted: #F0F3FA;
+  --ec-surface-transparent: rgba(255, 255, 255, 0.68);
+
+  /* Status */
+  --ec-success-500: #199A6C;
+  --ec-info-500: #2F6FEB;
+  --ec-warning-500: #FACC15;
+  --ec-danger-500: #E44F4F;
+
+  /* Text */
+  --ec-text-primary: var(--ec-neutral-950);
+  --ec-text-secondary: var(--ec-neutral-600);
+  --ec-text-muted: rgba(100, 116, 139, 0.72);
+  --ec-text-on-brand: var(--ec-neutral-900);
+
+  /* Shadows & effects */
+  --shadow-soft: 0 24px 40px -24px rgba(15, 23, 42, 0.18);
+  --gradient-hero: linear-gradient(135deg, rgba(13, 37, 63, 0.08) 0%, rgba(13, 37, 63, 0) 55%);
+  --gradient-app: radial-gradient(120% 120% at 50% -20%, rgba(244, 167, 35, 0.16) 0%, rgba(244, 167, 35, 0) 55%), linear-gradient(180deg, rgba(15, 23, 42, 0.04) 0%, rgba(15, 23, 42, 0) 100%);
+  --gradient-panel: linear-gradient(135deg, rgba(244, 167, 35, 0.08) 0%, rgba(15, 23, 42, 0.02) 100%);
+
+  /* Bridge tokens for Tailwind/theme */
+  --color-background: var(--ec-bg-body);
+  --color-background-subtle: var(--ec-surface-muted);
+  --color-surface: var(--ec-surface);
+  --color-surface-elevated: var(--ec-surface-elevated);
+  --color-surface-muted: var(--ec-surface-muted);
+  --color-border: rgba(15, 23, 42, 0.08);
+  --color-content-primary: var(--ec-text-primary);
+  --color-content-secondary: var(--ec-text-secondary);
+  --color-content-muted: var(--ec-text-muted);
+  --color-content-inverted: #F8FAFC;
+  --color-accent: var(--ec-brand-500);
+  --color-accent-strong: var(--ec-brand-600);
+  --color-accent-subtle: rgba(244, 167, 35, 0.12);
+  --color-on-accent: var(--ec-text-on-brand);
+  --color-success: var(--ec-success-500);
+  --color-info: var(--ec-info-500);
+  --color-warning: var(--ec-warning-500);
+  --color-danger: var(--ec-danger-500);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --ec-bg-body: #0F1624;
+  --ec-surface: #182132;
+  --ec-surface-elevated: #1F2C3F;
+  --ec-surface-muted: #202B3F;
+  --ec-surface-transparent: rgba(23, 35, 53, 0.64);
+
+  --ec-text-primary: #F8FAFC;
+  --ec-text-secondary: rgba(219, 231, 245, 0.85);
+  --ec-text-muted: rgba(148, 176, 209, 0.7);
+  --ec-text-on-brand: #101825;
+
+  --shadow-soft: 0 24px 40px -24px rgba(7, 13, 27, 0.55);
+  --gradient-hero: linear-gradient(135deg, rgba(14, 24, 40, 0.9) 0%, rgba(12, 22, 34, 0.75) 50%, rgba(11, 19, 32, 0.9) 100%);
+  --gradient-app: radial-gradient(120% 120% at 50% -10%, rgba(244, 167, 35, 0.14) 0%, rgba(244, 167, 35, 0) 60%), linear-gradient(180deg, rgba(12, 20, 32, 0.9) 0%, rgba(12, 20, 32, 0.35) 100%);
+  --gradient-panel: linear-gradient(135deg, rgba(244, 167, 35, 0.12) 0%, rgba(38, 56, 78, 0.55) 100%);
+
+  --color-border: rgba(115, 136, 167, 0.22);
+  --color-content-inverted: #111927;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.force-light) {
+    color-scheme: dark;
+    --ec-bg-body: #0F1624;
+    --ec-surface: #182132;
+    --ec-surface-elevated: #1F2C3F;
+    --ec-surface-muted: #202B3F;
+    --ec-surface-transparent: rgba(23, 35, 53, 0.64);
+
+    --ec-text-primary: #F8FAFC;
+    --ec-text-secondary: rgba(219, 231, 245, 0.85);
+    --ec-text-muted: rgba(148, 176, 209, 0.7);
+    --ec-text-on-brand: #101825;
+
+    --shadow-soft: 0 24px 40px -24px rgba(7, 13, 27, 0.55);
+    --gradient-hero: linear-gradient(135deg, rgba(14, 24, 40, 0.9) 0%, rgba(12, 22, 34, 0.75) 50%, rgba(11, 19, 32, 0.9) 100%);
+    --gradient-app: radial-gradient(120% 120% at 50% -10%, rgba(244, 167, 35, 0.14) 0%, rgba(244, 167, 35, 0) 60%), linear-gradient(180deg, rgba(12, 20, 32, 0.9) 0%, rgba(12, 20, 32, 0.35) 100%);
+    --gradient-panel: linear-gradient(135deg, rgba(244, 167, 35, 0.12) 0%, rgba(38, 56, 78, 0.55) 100%);
+
+    --color-border: rgba(115, 136, 167, 0.22);
+    --color-content-inverted: #111927;
+  }
+}
