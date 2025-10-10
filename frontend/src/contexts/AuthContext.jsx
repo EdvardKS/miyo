@@ -102,9 +102,31 @@ export const AuthProvider = ({ children }) => {
   const changePassword = async (currentPassword, newPassword) => {
     try {
       await authService.changePassword(currentPassword, newPassword);
-      toast.success('Contraseña actualizada');
     } catch (error) {
       const message = error.response?.data?.message || 'Error al cambiar contraseña';
+      toast.error(message);
+      throw error;
+    }
+  };
+
+  const verifyPassword = async (currentPassword) => {
+    try {
+      await authService.verifyPassword(currentPassword);
+    } catch (error) {
+      const message = error.response?.data?.message || 'Password actual incorrecto';
+      toast.error(message);
+      throw error;
+    }
+  };
+
+  const uploadAvatar = async (file) => {
+    try {
+      const response = await authService.uploadAvatar(file);
+      await loadUser();
+      toast.success('Avatar actualizado');
+      return response;
+    } catch (error) {
+      const message = error.response?.data?.message || 'Error al subir avatar';
       toast.error(message);
       throw error;
     }
@@ -119,6 +141,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const reloadUser = async () => {
+    await loadUser();
+  };
+
   const value = {
     user,
     token,
@@ -128,7 +154,10 @@ export const AuthProvider = ({ children }) => {
     logout,
     updateProfile,
     changePassword,
+    verifyPassword,
+    uploadAvatar,
     deleteAccount,
+    reloadUser,
     isAuthenticated: !!user,
   };
 

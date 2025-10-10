@@ -2,7 +2,11 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
+const fs = require('fs');
+const path = require('path');
 const { auth } = require('../middleware/auth');
+const Photo = require('../models/Photo');
+const Party = require('../models/Party');
 const router = express.Router();
 
 // Registro
@@ -180,6 +184,94 @@ router.put('/password', auth, [
     res.json({ message: 'Password actualizado exitosamente' });
   } catch (error) {
     console.error('Error cambiando password:', error);
+    res.status(500).json({ message: 'Error del servidor' });
+  }
+});
+
+// Verificar password actual sin cambiarlo
+router.post('/password/verify', auth, [
+  body('currentPassword').exists()
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { currentPassword } = req.body;
+    const user = req.user;
+
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Password actual incorrecto' });
+    }
+
+    res.json({ message: 'Password verificado' });
+  } catch (error) {
+    console.error('Error verificando password:', error);
+    res.status(500).json({ message: 'Error del servidor' });
+  }
+});
+
+// Eliminar cuenta y datos asociados
+router.delete('/profile', auth, async (req, res) => {
+  try {
+    const user = req.user;
+    const userId = user._id;
+
+    // Eliminar avatar local si existe
+    if (user.avatar && user.avatar.startsWith('/uploads/')) {
+      const avatarPath = path.join(process.cwd(), user.avatar.replace(/^\//, ''));
+      if (fs.existsSync(avatarPath)) {
+        fs.unlinkSync(avatarPath);
+      }
+    }
+
+    // Obtener fotos del usuario para eliminar archivos
+    const photos = await Photo.find({ user: userId }).select('url thumbnailUrl');
+    const photoIds = photos.map((photo) => photo._id);
+
+    const removeMediaFile = (filePath) => {
+      if (!filePath) return;
+      if (!filePath.startsWith('/uploads/')) return;
+      const absolutePath = path.join(process.cwd(), filePath.replace(/^\//, ''));
+      if (fs.existsSync(absolutePath)) {
+        fs.unlinkSync(absolutePath);
+      }
+    };
+
+    photos.forEach((photo) => {
+      removeMediaFile(photo.url);
+      removeMediaFile(photo.thumbnailUrl);
+    });
+
+    if (photoIds.length) {
+      await Photo.deleteMany({ _id: { $in: photoIds } });
+      await Party.updateMany({}, { $pull: { photos: { $in: photoIds } } });
+    }
+
+    // Eliminar fiestas creadas por el usuario
+    await Party.deleteMany({ creator: userId });
+
+    // Remover al usuario de participantes y seguidores/seguidos
+    await Party.updateMany(
+      { 'participants.user': userId },
+      { $pull: { participants: { user: userId } } }
+    );
+
+    await User.updateMany({}, {
+      $pull: {
+        followers: userId,
+        following: userId,
+        followRequests: { user: userId }
+      }
+    });
+
+    await User.deleteOne({ _id: userId });
+
+    res.json({ message: 'Cuenta eliminada correctamente' });
+  } catch (error) {
+    console.error('Error eliminando cuenta:', error);
     res.status(500).json({ message: 'Error del servidor' });
   }
 });
