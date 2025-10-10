@@ -199,7 +199,6 @@ const Profile = () => {
         </div>
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-[2fr,1fr]">
         <section className="ui-card border border-outline/30 px-6 py-8 sm:px-10">
           <h2 className="text-xl font-semibold text-content">Álbumes creados</h2>
           <p className="mt-1 text-sm text-content-muted">
@@ -236,20 +235,6 @@ const Profile = () => {
             )}
           </div>
         </section>
-
-        <aside className="space-y-6">
-          {isOwnProfile && (
-            <div className="ui-card border border-outline/30 px-5 py-6 text-sm text-content-muted">
-              <p>
-                Personaliza tu perfil, tema y seguridad desde la vista de{' '}
-                <Link to="/settings" className="font-semibold text-brand hover:underline">
-                  Configuración
-                </Link>.
-              </p>
-            </div>
-          )}
-        </aside>
-      </div>
     </div>
   );
 };
