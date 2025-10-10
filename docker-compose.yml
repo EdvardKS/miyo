@@ -18,13 +18,13 @@ services:
       - fiestas-network
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: node:18-alpine
     container_name: fiestas-backend
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
     restart: unless-stopped
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       PORT: 5000
       MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongodb:27017/${MONGO_DATABASE}?authSource=admin
       JWT_SECRET: ${JWT_SECRET}
@@ -34,9 +34,12 @@ services:
       EMAIL_USER: ${EMAIL_USER}
       EMAIL_PASS: ${EMAIL_PASS}
       UPLOAD_PATH: /app/uploads
+      CHOKIDAR_USEPOLLING: "true"
     ports:
       - "5000:5000"
     volumes:
+      - ./backend:/app
+      - backend_node_modules:/app/node_modules
       - backend_uploads:/app/uploads
     depends_on:
       - mongodb
@@ -44,13 +47,21 @@ services:
       - fiestas-network
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: node:18-alpine
     container_name: fiestas-frontend
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 3000"
     restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      VITE_API_URL: /api
+      VITE_SOCKET_URL: http://localhost:5000
+      CHOKIDAR_USEPOLLING: "true"
     ports:
-      - "3000:80"
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
     depends_on:
       - backend
     networks:
@@ -59,6 +70,8 @@ services:
 volumes:
   mongodb_data:
   backend_uploads:
+  backend_node_modules:
+  frontend_node_modules:
 
 networks:
   fiestas-network:

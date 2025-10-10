@@ -3,8 +3,11 @@ import axios from 'axios';
 // Base API robusta para dev/prod: si estamos detrás de nginx usa "/api"
 let API_BASE_URL = import.meta.env.VITE_API_URL;
 if (!API_BASE_URL) {
-  const isDockerNginx = typeof window !== 'undefined' && window.location.port === '3000';
-  API_BASE_URL = isDockerNginx ? '/api' : 'http://localhost:5000/api';
+  if (typeof window !== 'undefined' && window.location.port === '3000') {
+    API_BASE_URL = '/api';
+  } else {
+    API_BASE_URL = 'http://localhost:5000/api';
+  }
 }
 
 const api = axios.create({

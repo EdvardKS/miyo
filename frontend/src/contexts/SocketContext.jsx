@@ -19,10 +19,22 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     if (isAuthenticated && token) {
-      const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
+      const resolveSocketUrl = () => {
+        const explicit = import.meta.env.VITE_SOCKET_URL;
+        if (explicit) return explicit;
+        if (typeof window === 'undefined') return 'http://localhost:5000';
+        const { protocol, hostname, port } = window.location;
+        if (port === '3000') {
+          return `${protocol}//${hostname}:5000`;
+        }
+        return `${protocol}//${hostname}${port ? `:${port}` : ''}`;
+      };
+
+      const newSocket = io(resolveSocketUrl(), {
         auth: {
           token,
         },
+        transports: ['websocket', 'polling'],
       });
 
       newSocket.on('connect', () => {

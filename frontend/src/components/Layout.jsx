@@ -40,9 +40,9 @@ const Layout = ({ children }) => {
               <Camera className="h-6 w-6 text-brand-500" />
             </span>
             <div className="flex flex-col">
-              <span className="text-lg font-semibold tracking-tight">EventsCatch</span>
+              <span className="text-lg font-semibold tracking-tight">FotoCam</span>
               <span className="text-xs uppercase tracking-[0.2em] text-content-muted">
-                Álbumes inteligentes
+                Álbumes compartidos
               </span>
             </div>
           </Link>
