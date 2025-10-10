@@ -20,6 +20,7 @@ const Layout = ({ children }) => {
     { path: '/top', label: 'Destacados', icon: TrendingUp },
     { path: '/create', label: 'Crear álbum', icon: PlusCircle },
     { path: '/search', label: 'Explorar', icon: Search },
+    { path: `/settings`, label: 'Configuración', icon: Settings },
     { path: `/profile/${user?.username ?? ''}`, label: 'Perfil', icon: User },
   ];
 
@@ -46,7 +47,7 @@ const Layout = ({ children }) => {
             </div>
           </Link>
 
-          <nav className="hidden items-center gap-2 rounded-full border border-outline/40 bg-surface-muted/60 px-2 py-2 backdrop-blur-lg md:flex">
+          <nav className="hidden items-center gap-2 rounded-full bg-surface-muted/60 px-2 py-2 backdrop-blur-lg md:flex">
             {navItems.map(({ path, label, icon: Icon }) => {
               const active = isActive(path);
               return (
@@ -67,24 +68,20 @@ const Layout = ({ children }) => {
             })}
           </nav>
 
-          <div className="flex items-center gap-4">
-            <Link
-              to={`/profile/${user?.username ?? ''}`}
-              title="Perfil"
-              className="flex size-10 items-center justify-center rounded-full border border-outline/40 bg-surface-muted text-content transition hover:border-brand hover:text-brand"
-            >
-              <User className="h-5 w-5" />
-              <span className="sr-only">Perfil</span>
-            </Link>
-            <Link
-              to={`/profile/${user?.username ?? ''}#ajustes`}
-              title="Ajustes rápidos"
-              className="flex size-10 items-center justify-center rounded-full border border-outline/40 bg-surface-muted text-content transition hover:border-brand hover:text-brand"
-            >
-              <Settings className="h-5 w-5" />
-              <span className="sr-only">Ajustes</span>
-            </Link>
-          </div>
+          <Link
+            to={`/profile/${user?.username ?? ''}`}
+            className="flex items-center gap-3 rounded-full bg-surface-muted/70 px-3 py-2 text-sm font-medium text-content transition hover:text-brand"
+            title="Ver perfil"
+          >
+            <span className="flex size-8 items-center justify-center overflow-hidden rounded-full border border-outline/40 bg-surface">
+              {user?.avatar ? (
+                <img src={user.avatar} alt={user.username} className="size-full object-cover" />
+              ) : (
+                <User className="h-4 w-4" />
+              )}
+            </span>
+            <span>{user?.username}</span>
+          </Link>
         </div>
       </header>
 
@@ -92,7 +89,7 @@ const Layout = ({ children }) => {
         {children}
       </main>
 
-      <nav className="fixed bottom-5 left-1/2 z-40 flex w-[92%] max-w-xl -translate-x-1/2 items-center justify-around rounded-full border border-outline/40 bg-surface/90 px-3 py-3 backdrop-blur-xl shadow-soft md:hidden">
+      <nav className="fixed bottom-5 left-1/2 z-40 flex w-[92%] max-w-xl -translate-x-1/2 items-center justify-around rounded-full bg-surface/90 px-3 py-3 backdrop-blur-xl shadow-soft md:hidden">
         {navItems.map(({ path, label, icon: Icon }) => {
           const active = isActive(path);
           return (

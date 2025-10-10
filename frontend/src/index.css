@@ -39,7 +39,7 @@ body {
 .ui-card {
   background: var(--ec-surface);
   border: 1px solid var(--color-border);
-  border-radius: 1.5rem;
+  border-radius: 1rem;
   box-shadow: var(--shadow-soft);
   backdrop-filter: blur(18px);
 }
@@ -47,7 +47,7 @@ body {
 .ui-card-muted {
   background: var(--ec-surface-muted);
   border: 1px solid var(--color-border);
-  border-radius: 1.5rem;
+  border-radius: 1rem;
   backdrop-filter: blur(14px);
 }
 

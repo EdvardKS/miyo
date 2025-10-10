@@ -46,12 +46,12 @@ module.exports = {
         'panel-glow': 'var(--gradient-panel)',
       },
       boxShadow: {
-        'soft': 'var(--shadow-soft)',
-        'focus': '0 0 0 3px rgba(244, 167, 35, 0.35)',
+        soft: 'var(--shadow-soft)',
+        focus: '0 0 0 3px rgba(194, 122, 44, 0.35)',
       },
       borderRadius: {
-        xl: '1.25rem',
-        '2xl': '1.75rem',
+        xl: '1rem',
+        '2xl': '1.25rem',
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-out',

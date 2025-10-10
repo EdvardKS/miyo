@@ -15,6 +15,7 @@ import Profile from './pages/Profile';
 import MyPhotos from './pages/MyPhotos';
 import Privacy from './pages/Privacy';
 import Search from './pages/Search.jsx';
+import Settings from './pages/Settings.jsx';
 import ProtectedRoute from './components/ProtectedRoute';
 import { ThemeProvider } from './contexts/ThemeContext';
 
@@ -75,6 +76,16 @@ function App() {
                       <ProtectedRoute>
                         <Layout>
                           <Profile />
+                        </Layout>
+                      </ProtectedRoute>
+                    )}
+                  />
+                  <Route
+                    path="/settings"
+                    element={(
+                      <ProtectedRoute>
+                        <Layout>
+                          <Settings />
                         </Layout>
                       </ProtectedRoute>
                     )}

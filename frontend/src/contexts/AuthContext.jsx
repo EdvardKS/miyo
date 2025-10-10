@@ -110,6 +110,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const deleteAccount = async () => {
+    try {
+      await authService.deleteAccount();
+      logout();
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const value = {
     user,
     token,
@@ -119,6 +128,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     updateProfile,
     changePassword,
+    deleteAccount,
     isAuthenticated: !!user,
   };
 
