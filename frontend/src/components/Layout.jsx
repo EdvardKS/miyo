@@ -20,7 +20,7 @@ const Layout = ({ children }) => {
     { path: '/top', label: 'Destacados', icon: TrendingUp },
     { path: '/create', label: 'Crear álbum', icon: PlusCircle },
     { path: '/search', label: 'Explorar', icon: Search },
-    { path: `/settings`, label: 'Configuración', icon: Settings },
+    // { path: `/settings`, label: 'Configuración', icon: Settings },
     { path: `/profile/${user?.username ?? ''}`, label: 'Perfil', icon: User },
   ];
 
