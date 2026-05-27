@@ -1,6 +1,22 @@
 # 🎉 Fiestas App - Aplicación de Compartir Fotos de Eventos
 
+<!-- viewer.upstream_port: 3000 -->
+<!-- viewer.main_service: frontend -->
+
 Aplicación web completa para crear y compartir fotos de fiestas y eventos en tiempo real. Desarrollada con Docker, Node.js/Express backend, React frontend y MongoDB.
+
+## Despliegue (viewerSoftware autodeploy)
+
+| Servicio | Puerto interno |
+|---|---|
+| frontend | 3000 |
+| backend  | 5000 |
+| mongodb  | 27017 |
+
+- **Upstream público**: `frontend` (3000)
+- **Healthcheck**: `GET /` en cada contenedor (nginx + node express + mongosh ping)
+- **Webhook autodeploy**: configurar `Push` hook a `https://viewer.edvardks.com/api/webhooks/git/miyo`
+- **Variables REQUIRED**: `MONGO_ROOT_USERNAME`, `MONGO_ROOT_PASSWORD`, `MONGO_DATABASE`, `JWT_SECRET`, `JWT_EXPIRE`, `CORS_ALLOWED_ORIGINS` (= dominio público), `APP_URL` (= dominio público)
 
 ## 🚀 Características Principales
 
