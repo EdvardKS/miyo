@@ -22,11 +22,11 @@ export const SocketProvider = ({ children }) => {
       const resolveSocketUrl = () => {
         const explicit = import.meta.env.VITE_SOCKET_URL;
         if (explicit) return explicit;
-        if (typeof window === 'undefined') return 'http://localhost:5000';
+        if (typeof window === 'undefined') return 'http://backend:5000';
+        // Same-origin everywhere — nginx (frontend container) and the VPS
+        // reverse proxy both upgrade /socket.io to the backend service.
+        // Avoids hard-coding ports that break behind HTTPS:443.
         const { protocol, hostname, port } = window.location;
-        if (port === '3000') {
-          return `${protocol}//${hostname}:5000`;
-        }
         return `${protocol}//${hostname}${port ? `:${port}` : ''}`;
       };
 

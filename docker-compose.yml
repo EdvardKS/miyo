@@ -1,4 +1,15 @@
-version: '3.8'
+# Production stack. Designed to be deployed by viewerSoftware's autodeploy
+# pipeline (canary blue-green + nginx reverse-proxy upstream on host).
+#
+#   - No host port bindings: nginx_reverse_proxy reaches the frontend via the
+#     shared `reverse_proxy` external network. Mongo + backend stay on the
+#     private `fiestas-network`.
+#   - Multi-stage builds: backend produces a slim runtime image without dev
+#     deps; frontend produces a vite-built static bundle served by nginx
+#     inside the container on :3000.
+#   - Healthchecks on every service: deploy pipeline waits for `healthy`
+#     before flipping the upstream.
+#   - All secrets sourced from .env (gitignored). See .env.example.
 
 services:
   mongodb:
@@ -9,70 +20,69 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
       MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
-    ports:
-      - "27017:27017"
     volumes:
       - mongodb_data:/data/db
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     networks:
       - fiestas-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.runCommand({ ping: 1 }).ok"]
+      interval: 15s
+      timeout: 5s
+      start_period: 20s
+      retries: 5
 
   backend:
-    image: node:18-alpine
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: fiestas-backend
-    working_dir: /app
-    command: sh -c "npm install && npm run dev"
     restart: unless-stopped
+    env_file: .env
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
       PORT: 5000
       MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongodb:27017/${MONGO_DATABASE}?authSource=admin
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_EXPIRE: ${JWT_EXPIRE}
-      EMAIL_HOST: ${EMAIL_HOST}
-      EMAIL_PORT: ${EMAIL_PORT}
-      EMAIL_USER: ${EMAIL_USER}
-      EMAIL_PASS: ${EMAIL_PASS}
       UPLOAD_PATH: /app/uploads
-      CHOKIDAR_USEPOLLING: "true"
-    ports:
-      - "5000:5000"
     volumes:
-      - ./backend:/app
-      - backend_node_modules:/app/node_modules
       - backend_uploads:/app/uploads
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
     networks:
       - fiestas-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:5000/api/health >/dev/null 2>&1 || curl -fsS http://localhost:5000/api/health >/dev/null 2>&1 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      start_period: 20s
+      retries: 5
 
   frontend:
-    image: node:18-alpine
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     container_name: fiestas-frontend
-    working_dir: /app
-    command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 3000"
     restart: unless-stopped
-    environment:
-      NODE_ENV: development
-      VITE_API_URL: /api
-      VITE_SOCKET_URL: http://localhost:5000
-      CHOKIDAR_USEPOLLING: "true"
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - frontend_node_modules:/app/node_modules
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - fiestas-network
+      - reverse_proxy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ >/dev/null 2>&1 || curl -fsS http://localhost:3000/ >/dev/null 2>&1 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
 
 volumes:
   mongodb_data:
   backend_uploads:
-  backend_node_modules:
-  frontend_node_modules:
 
 networks:
   fiestas-network:
     driver: bridge
+  reverse_proxy:
+    external: true

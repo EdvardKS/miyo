@@ -1,13 +1,12 @@
 import axios from 'axios';
 
-// Base API robusta para dev/prod: si estamos detrás de nginx usa "/api"
+// Base API robusta para dev/prod. En el navegador siempre vamos contra la
+// misma origen (/api) porque nginx — sea el reverse_proxy del VPS o el del
+// frontend container — está proxyando /api → backend:5000. Sólo cuando el
+// build es SSR / Node (no hay window) caemos al host docker interno.
 let API_BASE_URL = import.meta.env.VITE_API_URL;
 if (!API_BASE_URL) {
-  if (typeof window !== 'undefined' && window.location.port === '3000') {
-    API_BASE_URL = '/api';
-  } else {
-    API_BASE_URL = 'http://localhost:5000/api';
-  }
+  API_BASE_URL = typeof window !== 'undefined' ? '/api' : 'http://backend:5000/api';
 }
 
 const api = axios.create({
